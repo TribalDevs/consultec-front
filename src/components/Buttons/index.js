@@ -59,7 +59,6 @@ const Button = styled.button`
 export const PrimaryButton = styled(Button)`
   background-color: ${(props) => props.theme.buttons.primary.background};
   color: ${(props) => props.theme.buttons.primary.color};
-  border: 2px solid ${(props) => props.theme.buttons.primary.background};
   .loader__container__small {
     border: 4px solid ${(props) => props.theme.buttons.primary.color};
   }
@@ -67,10 +66,6 @@ export const PrimaryButton = styled(Button)`
     background-color: ${(props) =>
       props.theme.buttons.primary.hover.background};
     color: ${(props) => props.theme.buttons.primary.hover.color};
-    border: 2px solid ${(props) => props.theme.buttons.primary.hover.border};
-    .loader__container__small {
-      border: 4px solid ${(props) => props.theme.buttons.primary.hover.border};
-    }
   }
   &:disabled {
     cursor: not-allowed;
