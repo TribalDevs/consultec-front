@@ -69,6 +69,10 @@ export const Form = styled.form`
   .quill {
     margin-bottom: 0.5rem;
   }
+  .input {
+    display: flex;
+    flex-direction: column;
+  }
   input[type="file"] {
     color: transparent;
     border: none;
@@ -151,7 +155,7 @@ export const Form = styled.form`
       height: 10rem;
       object-fit: contain;
     }
-    p{
+    p {
       font-size: 0.7rem;
     }
   }
