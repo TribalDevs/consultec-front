@@ -1,5 +1,4 @@
-import { PrimaryButton } from "components";
-import { Form } from "components/Forms";
+import { PrimaryButton, Form, Input } from "components";
 import React from "react";
 import { ParagraphTextColor } from "utils";
 import "./styles.sass";
@@ -12,10 +11,18 @@ export default function LoginScreen() {
           Iniciar sesión
         </ParagraphTextColor>
         <Form>
-          <label htmlFor="email">Correo electrónico</label>
-          <input type="email" name="email" id="email" />
-          <label htmlFor="password">Contraseña</label>
-          <input type="password" name="password" id="password" />
+          <Input
+            name="email"
+            type="email"
+            placeholder="Correo electrónico"
+            label={"Correo electrónico"}
+          />
+          <Input
+            name="password"
+            type="password"
+            placeholder="Contraseña"
+            label={"Contraseña"}
+          />
           <PrimaryButton modifiers={["small"]}>Iniciar sesión</PrimaryButton>
         </Form>
         <div className="login__footer">
