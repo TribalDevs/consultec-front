@@ -4,7 +4,7 @@ export const mainTheme = {
   secondaryColor: main[300],
   tertiaryColor: main[200],
   background: neutral[100],
-  textColor: "#6c757d",
+  textColor: "#333",
   borderText: main[200],
   links: {
     color: main[500],
@@ -42,8 +42,8 @@ export const mainTheme = {
       background: main[100],
       color: text.textInverted,
       hover: {
-        background: main[200],
-        color: text.text,
+        background: main[500],
+        color: text.textInverted,
       },
     },
     secondary: {
