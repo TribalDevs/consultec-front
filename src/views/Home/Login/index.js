@@ -1,8 +1,26 @@
 import { PrimaryButton, Form, Input } from "components";
-import React from "react";
-import { ParagraphTextColor } from "utils";
+import React, { useReducer, useEffect } from "react";
+import { reducer, actions, initialState } from "./reducer";
+import { formValidator, ParagraphTextColor } from "utils";
 import "./styles.sass";
 export default function LoginScreen() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const handleChange = (e) => {
+    dispatch({
+      type: actions.UPDATE_FORM_DATA,
+      payload: { name: e.target.name, value: e.target.value },
+    });
+  };
+  const handleSubmit = () => {
+    formValidator({
+      dispatch: dispatch,
+      formConditions: state.formConditions,
+      formData: state.formData,
+      errors: state.errors,
+      setErrors: actions.SET_ERRORS,
+    });
+  };
+
   return (
     <div className="login__screen">
       <div className="login__screen__left"></div>
@@ -10,20 +28,24 @@ export default function LoginScreen() {
         <ParagraphTextColor modifiers={["h2"]}>
           Iniciar sesión
         </ParagraphTextColor>
-        <Form>
-          <Input
-            name="email"
-            type="email"
-            placeholder="Correo electrónico"
-            label={"Correo electrónico"}
-          />
-          <Input
-            name="password"
-            type="password"
-            placeholder="Contraseña"
-            label={"Contraseña"}
-          />
-          <PrimaryButton modifiers={["small"]}>Iniciar sesión</PrimaryButton>
+        <Form onSubmit={e => e.preventDefault()}>
+          {state.inputFields.map((input, index) => (
+            <Input
+              name={input.name}
+              type={input.type}
+              placeholder={input.placeholder}
+              label={input.label}
+              onChange={handleChange}
+              key={index}
+              error={{
+                error: state.errors[input.name].error,
+                message: state.errors[input.name].message,
+              }}
+            />
+          ))}
+          <PrimaryButton modifiers={["small"]} onClick={handleSubmit}>
+            Iniciar sesión
+          </PrimaryButton>
         </Form>
         <div className="login__footer">
           <ParagraphTextColor>

@@ -5,5 +5,6 @@ export const homeRoutes = [
     path: "/",
     component: HomeScreen,
     exact: true,
+    isPrivate: true,
   },
 ];
