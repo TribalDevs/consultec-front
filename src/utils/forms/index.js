@@ -12,25 +12,40 @@ export const formValidator = ({
   dispatch,
   errors,
   setErrors,
+  step,
 }) => {
   // Destructuring
   let errorsAux = { ...errors };
+  let passedStep = true;
+
   // Validate formData
   Object.keys(formConditions).forEach((key) => {
     let { passed, error } = formConditions[key].condition(formData[key]);
     if (passed || !formConditions[key].required) {
       errorsAux[key].error = false;
     } else {
-      errorsAux[key].error = true;
-      errorsAux[key].message = error;
+      if (step) {
+        if (step == formConditions[key].step) {
+          errorsAux[key].error = true;
+          errorsAux[key].message = error;
+          passedStep = false;
+        }
+      } else {
+        errorsAux[key].error = true;
+        errorsAux[key].message = error;
+      }
     }
   });
   dispatch({ type: setErrors, payload: errorsAux });
-  // return if there are errors
-  if (Object.values(errorsAux).includes(true)) {
-    // Scroll to the top of the page
-    window.scrollTo(0, 0);
-    return false;
+  if (step) {
+    if (passedStep == false) {
+      return false;
+    }
+  } else {
+    if (Object.values(errorsAux).filter((error) => error.error).length > 0) {
+      return false;
+    }
   }
+
   return true;
 };
