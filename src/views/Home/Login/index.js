@@ -1,8 +1,10 @@
-import { PrimaryButton, Form, Input } from "components";
+import { Form, Input, Button } from "components";
 import React, { useReducer, useEffect } from "react";
 import { reducer, actions, initialState } from "./reducer";
-import { formValidator, ParagraphTextColor } from "utils";
+import { formValidator } from "utils";
+import { TextComponent } from "components";
 import "./styles.sass";
+import { petition } from "api";
 export default function LoginScreen() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const handleChange = (e) => {
@@ -12,23 +14,40 @@ export default function LoginScreen() {
     });
   };
   const handleSubmit = () => {
-    formValidator({
+    var isPassed = formValidator({
       dispatch: dispatch,
       formConditions: state.formConditions,
       formData: state.formData,
       errors: state.errors,
       setErrors: actions.SET_ERRORS,
     });
+    if (isPassed) {
+      petition({
+        url: "/user/login/",
+        method: "POST",
+        body: state.formData,
+        constants: {
+          REQUEST: actions.LOGIN_REQUEST,
+          SUCCESS: actions.LOGIN_SUCCESS,
+          FAILURE: actions.LOGIN_FAILURE,
+        },
+        dispatch: dispatch,
+      });
+    }
   };
 
   return (
     <div className="login__screen">
       <div className="login__screen__left"></div>
       <div className="login__screen__right">
-        <ParagraphTextColor modifiers={["h2"]}>
-          Iniciar sesión
-        </ParagraphTextColor>
-        <Form onSubmit={e => e.preventDefault()}>
+        <TextComponent
+          type="h2"
+          text={{
+            en: "Login",
+            es: "Iniciar sesión",
+          }}
+        />
+        <Form onSubmit={(e) => e.preventDefault()}>
           {state.inputFields.map((input, index) => (
             <Input
               name={input.name}
@@ -43,14 +62,33 @@ export default function LoginScreen() {
               }}
             />
           ))}
-          <PrimaryButton modifiers={["small"]} onClick={handleSubmit}>
-            Iniciar sesión
-          </PrimaryButton>
+          <Button
+            text={{
+              en: "Login",
+              es: "Iniciar sesión",
+            }}
+            modifiers={["small"]}
+            type="primary"
+            onClick={handleSubmit}
+            loading={state.login.loading}
+          />
         </Form>
         <div className="login__footer">
-          <ParagraphTextColor>
-            ¿Aún no tienes una cuenta? <a href="/register">Regístrate</a>
-          </ParagraphTextColor>
+          <TextComponent
+            type="h4"
+            text={{
+              es: (
+                <>
+                  ¿Aún no tienes una cuenta? <a href="/register">Regístrate</a>
+                </>
+              ),
+              en: (
+                <>
+                  Don't have an account? <a href="/register">Register</a>
+                </>
+              ),
+            }}
+          />
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
-import { PrimaryButton, Form, Input, SecondaryButton } from "components";
+import { Form, Input, Button, TextComponent } from "components";
 import React, { useReducer, useEffect } from "react";
 import { reducer, actions, initialState } from "./reducer";
-import { formValidator, ParagraphTextColor } from "utils";
+import { formValidator } from "utils";
 import "./styles.sass";
 export default function RegisterScreen() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -57,9 +57,13 @@ export default function RegisterScreen() {
     <div className="register__screen">
       <div className="register__screen__left"></div>
       <div className="register__screen__right">
-        <ParagraphTextColor modifiers={["h2"]}>
-          Registro de usuario
-        </ParagraphTextColor>
+        <TextComponent
+          text={{
+            es: "Registro",
+            en: "Register",
+          }}
+          type="h2"
+        />
         <Form onSubmit={(e) => e.preventDefault()} id="register__form">
           {state.inputFields
             .filter((input) => input.step === state.step)
@@ -81,26 +85,57 @@ export default function RegisterScreen() {
           <div className="action__buttons">
             {/* Previous step */}
             {state.step > 1 && (
-              <SecondaryButton onClick={handlePrevStep}>
-                Anterior
-              </SecondaryButton>
+              <Button
+                text={{
+                  es: "Anterior",
+                  en: "Previous",
+                }}
+                type="secondary"
+                onClick={handlePrevStep}
+              />
             )}
             {/* Next step */}
             {state.step < state.totalSteps && (
-              <PrimaryButton onClick={handleNextStep}>Siguiente</PrimaryButton>
+              <Button
+                text={{
+                  es: "Siguiente",
+                  en: "Next",
+                }}
+                type="secondary"
+                onClick={handleNextStep}
+              />
             )}
 
             {/* Submit */}
             {state.step === state.totalSteps && (
-              <PrimaryButton onClick={handleSubmit}>Enviar</PrimaryButton>
+              <Button
+                text={{
+                  es: "Enviar",
+                  en: "Submit",
+                }}
+                type="primary"
+                onClick={handleSubmit}
+              />
             )}
           </div>
         </Form>
 
         <div className="login__footer">
-          <ParagraphTextColor>
-            ¿Ya tienes una cuenta? <a href="/login">Inicia sesión</a>
-          </ParagraphTextColor>
+          <TextComponent
+            type="h4"
+            text={{
+              es: (
+                <>
+                  ¿Ya tienes una cuenta? <a href="/login">Inicia sesión</a>{" "}
+                </>
+              ),
+              en: (
+                <>
+                  Already have an account? <a href="/login">Login</a>
+                </>
+              ),
+            }}
+          />
         </div>
       </div>
     </div>
