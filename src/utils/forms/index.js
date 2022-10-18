@@ -38,7 +38,7 @@ export const formValidator = ({
   });
   dispatch({ type: setErrors, payload: errorsAux });
   if (step) {
-    if (passedStep == false) {
+    if (passedStep === false) {
       return false;
     }
   } else {
