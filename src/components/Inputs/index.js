@@ -9,10 +9,11 @@ export const Input = ({
   label,
   error,
   disabled,
+  key,
   ...props
 }) => {
   return (
-    <div className="input">
+    <div className="input" key={key}>
       <label htmlFor={name}>{label}</label>
       <input
         name={name}
@@ -23,7 +24,7 @@ export const Input = ({
         disabled={disabled}
         {...props}
       />
-      {error && <p className="input__error">{error}</p>}
+      {error.error && <p className="input__error">{error.message}</p>}
     </div>
   );
 };
