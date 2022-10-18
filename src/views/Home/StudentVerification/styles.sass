@@ -1,0 +1,63 @@
+.verification__component
+    .verification__header
+        margin-bottom: 1rem
+        padding: 1.5rem 5rem
+        border-bottom: 1px solid #e0e0e0
+    .verification__table
+        margin-top: 20px
+        border-collapse: collapse
+        border-spacing: 0
+        padding: 2rem 5rem
+        .verification__table__filter
+            display: flex
+            justify-content: left
+            align-items: left
+            flex-direction: column
+            padding-bottom: 2.5rem
+            select
+                width: 25%
+                height: 40px
+                border: 1px solid #e0e0e0
+                border-radius: 5px
+                padding: 0 10px
+                margin-bottom: 10px
+                font-size: 14px
+                color: #505050
+                outline: none
+                &:focus
+                    border: 1px solid #2196f3
+        table
+            width: 100%
+            border-collapse: collapse
+            border-spacing: 0
+            border: 1px solid #ddd
+            th
+                text-align: left
+                padding: 8px
+                background-color: #f2f2f2
+                border: 1px solid #ddd
+            td
+                padding: 8px
+                border: 1px solid #ddd
+                text-align: left
+                &:nth-child(1)
+                    width: 20%
+                &:nth-child(2)
+                    width: 80%
+                button
+                    width: 100%
+                    border: 1px solid #e0e0e0
+                    border-radius: 5px
+                    font-size: 14px
+                    color: #505050
+                    outline: none
+                    transition: all 0.3s ease
+                    &:focus
+                        border: 1px solid #73b5eb
+                        transition: all 0.3s ease
+                    &:hover
+                        cursor: pointer
+                        background-color: #73b5eb
+                        color: #fff 
+                        border: 1px solid #73b5eb
+                        transition: all 0.3s ease
