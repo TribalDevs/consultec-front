@@ -2,6 +2,7 @@ import React from "react";
 // * React router dom stuff
 import { Route, Routes } from "react-router-dom";
 import { homeRoutes as routes } from "routes";
+import { RouteContainer } from "components";
 export const HomeRouter = () => {
   return (
     <div className="home__router">
@@ -18,7 +19,11 @@ export const HomeRouter = () => {
               key={index}
               path={route.path}
               exact={route.exact}
-              element={<route.component />}
+              element={
+                <RouteContainer isPrivate={route.isPrivate}>
+                  <route.component />
+                </RouteContainer>
+              }
             />
           ))}
         </Routes>

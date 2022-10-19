@@ -51,7 +51,6 @@ export const Form = styled.form`
     padding: 0.5rem;
     font-size: 0.8rem;
     color: ${(props) => props.theme.form.color};
-    margin-bottom: 1rem;
     accent-color: ${(props) => props.theme.form.accentColor};
     transition: all 0.3s ease-in-out;
     &:focus {
@@ -72,6 +71,13 @@ export const Form = styled.form`
   .input {
     display: flex;
     flex-direction: column;
+    margin-bottom: 1rem;
+  }
+  .input__error{
+    color: red;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+    font-size: 0.8rem;
   }
   input[type="file"] {
     color: transparent;

@@ -16,37 +16,42 @@ const reducer = (state = initialState, action) => {
           [action.payload.name]: action.payload.value,
         },
       };
-    case actions.LOGIN_REQUEST:
+    case actions.REGISTER_REQUEST:
       return {
         ...state,
-        login: {
-          ...state.login,
+        register: {
+          ...state.register,
           loading: true,
           error: null,
           success: false,
         },
       };
-    case actions.LOGIN_SUCCESS:
+    case actions.REGISTER_SUCCESS:
       return {
         ...state,
-        login: {
-          ...state.login,
+        register: {
+          ...state.register,
           loading: false,
           error: null,
           success: true,
           data: action.payload,
         },
       };
-    case actions.LOGIN_FAILURE:
+    case actions.REGISTER_FAILURE:
       return {
         ...state,
-        login: {
-          ...state.login,
+        register: {
+          ...state.register,
           loading: false,
           error: action.payload,
           success: false,
         },
       };
+    case actions.SET_STEP:
+      return {
+        ...state,
+        step: action.payload,
+      }
     default:
       return state;
   }

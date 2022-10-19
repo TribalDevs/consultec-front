@@ -16,87 +16,10 @@ export const typeScale = {
   helperText: "0.8rem",
   copyrightText: "0.7rem",
 };
-
-export const HEADERS_MODIFIERS = {
-  h1: () => `
-        font-size: ${typeScale.header1};
-        `,
-  h2: () => `
-        font-size: ${typeScale.header2};
-        `,
-  h3: () => `
-        font-size: ${typeScale.header3};
-        `,
-  h4: () => `
-        font-size: ${typeScale.header4};
-        `,
-  h5: () => `
-        font-size: ${typeScale.header5};
-        `,
-  heroHeader: () => `
-            font-size: ${typeScale.heroHeader};
-            `,
-  smallHeroHeader: () => `
-            font-size: ${typeScale.smallHeroHeader};
-  `,
-  primaryColor: (props) => `
-  color: ${props.theme.primaryColor} !important;
-  font-weight: bold;
-  `,
-  tertiaryColor: (props) => `
-  color: ${props.theme.tertiaryColor} !important;
-  font-weight: bold;
-  `,
-  borderBottom: (props) => `
-  border-bottom: 3px solid ${props.theme.borderText};
-  width: fit-content;
-  `,
-  bold: (props) => `
-  font-weight: bold;
-  `,
-  center: (props) => `
-  text-align: center;
-  `,
-  link: (props) => `
-    font-weight: bold;
-    &:hover {
-      opacity: 0.8;
-      cursor: pointer;
-    }
-  `,
-  noMarginTop: (props) => `
-    margin-top: 0;
-  `,
-};
-export const HeroHeaderText = styled.h1`
-  color: ${(props) => props.theme.headerHero.color};
-  font-family: ${primaryFont};
-  ${applyStyleModifiers(HEADERS_MODIFIERS)}
-`;
-export const ParagraphHeroHeader = styled.p`
-  color: ${(props) => props.theme.headerHero.color};
-  font-family: ${primaryFont};
-  font-size: ${typeScale.header3};
-  ${applyStyleModifiers(HEADERS_MODIFIERS)}
-`;
-export const HeaderTextColor = styled.h1`
-  color: ${(props) => props.theme.textColor};
-  font-family: ${primaryFont};
-  ${applyStyleModifiers(HEADERS_MODIFIERS)}
-`;
-export const ParagraphTextColor = styled.p`
-  color: ${(props) => props.theme.textColor};
-  font-family: ${primaryFont};
-  font-size: ${typeScale.smallParagraph};
-  ${applyStyleModifiers(HEADERS_MODIFIERS)}
-`;
-export const ParagraphLink = styled.a`
-  color: ${(props) => props.theme.textColor};
-  width: auto;
-  font-family: ${primaryFont};
-  &:hover {
-    color: ${(props) => props.theme.links.hoverColor};
-    cursor: pointer;
+export const formatLanguageText = (text, language) => {
+  if (language === "en") {
+    return text.en;
+  } else {
+    return text.en;
   }
-  ${applyStyleModifiers(HEADERS_MODIFIERS)}
-`;
+};
