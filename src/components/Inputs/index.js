@@ -14,17 +14,37 @@ export const Input = ({
 }) => {
   return (
     <div className="input" key={key}>
-      <label htmlFor={name}>{label}</label>
-      <input
-        name={name}
-        value={value}
-        onChange={onChange}
-        type={type}
-        placeholder={placeholder}
-        disabled={disabled}
-        {...props}
-      />
-      {error.error && <p className="input__error">{error.message}</p>}
+      {label && <label htmlFor={name}>{label}</label>}
+      {type !== "select" && (
+        <input
+          name={name}
+          value={value}
+          onChange={onChange}
+          type={type}
+          placeholder={placeholder}
+          disabled={disabled}
+          {...props}
+        />
+      )}
+      {type === "select" && (
+        <select
+          name={name}
+          value={value}
+          onChange={onChange}
+          type={type}
+          placeholder={placeholder}
+          disabled={disabled}
+          {...props}
+        >
+          {props.options.map((option, index) => (
+            <option key={index} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      )}
+
+      {error?.error && <p className="input__error">{error.message}</p>}
     </div>
   );
 };

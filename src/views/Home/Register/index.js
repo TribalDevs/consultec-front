@@ -3,8 +3,11 @@ import React, { useReducer, useEffect } from "react";
 import { reducer, actions, initialState } from "./reducer";
 import { formValidator } from "utils";
 import "./styles.sass";
+import { petition } from "api";
+import { useNavigate } from "react-router-dom";
 export default function RegisterScreen() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const navigate = useNavigate();
   const handleChange = (e) => {
     dispatch({
       type: actions.UPDATE_FORM_DATA,
@@ -12,13 +15,26 @@ export default function RegisterScreen() {
     });
   };
   const handleSubmit = () => {
-    formValidator({
+    var isPassed = formValidator({
       dispatch: dispatch,
       formConditions: state.formConditions,
       formData: state.formData,
       errors: state.errors,
       setErrors: actions.SET_ERRORS,
     });
+    if (isPassed) {
+      petition({
+        url: "/user/new/",
+        method: "POST",
+        body: state.formData,
+        dispatch: dispatch,
+        constants: {
+          REQUEST: actions.REGISTER_REQUEST,
+          SUCCESS: actions.REGISTER_SUCCESS,
+          FAILURE: actions.REGISTER_FAILURE,
+        },
+      });
+    }
   };
   const handleNextStep = () => {
     const passedStep = formValidator({
@@ -53,6 +69,11 @@ export default function RegisterScreen() {
       register__form.classList.remove("prev__step");
     }, 300);
   };
+  useEffect(() => {
+    if (state.register.success) {
+      navigate("/");
+    }
+  }, [state.register.success, navigate]);
   return (
     <div className="register__screen">
       <div className="register__screen__left"></div>
@@ -69,6 +90,7 @@ export default function RegisterScreen() {
             .filter((input) => input.step === state.step)
             .map((input, index) => (
               <Input
+                {...input}
                 name={input.name}
                 type={input.type}
                 placeholder={input.placeholder}
@@ -92,6 +114,8 @@ export default function RegisterScreen() {
                 }}
                 type="secondary"
                 onClick={handlePrevStep}
+                disabled={state.register.loading}
+                hidden={state.register.loading}
               />
             )}
             {/* Next step */}
@@ -103,6 +127,8 @@ export default function RegisterScreen() {
                 }}
                 type="secondary"
                 onClick={handleNextStep}
+                disabled={state.register.loading}
+                hidden={state.register.loading}
               />
             )}
 
@@ -115,6 +141,7 @@ export default function RegisterScreen() {
                 }}
                 type="primary"
                 onClick={handleSubmit}
+                loading={state.register.loading}
               />
             )}
           </div>

@@ -5,8 +5,8 @@ export const initialState = {
     email: "",
     password: "",
     confirmPassword: "",
-    name: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     identifier_number: "",
   },
   register: {
@@ -28,16 +28,20 @@ export const initialState = {
       message: "Error en la confirmación de contraseña",
       error: false,
     },
-    name: {
+    first_name: {
       message: "Error en el nombre",
       error: false,
     },
-    lastName: {
+    last_name: {
       message: "Error en el apellido",
       error: false,
     },
     identifier_number: {
       message: "Error en el número de identificación",
+      error: false,
+    },
+    gender: {
+      message: "Error en el género",
       error: false,
     },
   },
@@ -79,17 +83,11 @@ export const initialState = {
       step: 3,
     },
     confirmPassword: {
-      condition: (value, formData) => {
+      condition: (value) => {
         if (!value) {
           return {
             passed: false,
             error: "La confirmación de contraseña es requerida",
-          };
-        }
-        if (value !== formData.password) {
-          return {
-            passed: false,
-            error: "Las contraseñas no coinciden",
           };
         }
         return {
@@ -99,7 +97,7 @@ export const initialState = {
       required: true,
       step: 3,
     },
-    name: {
+    first_name: {
       condition: (value) => {
         if (!value) {
           return {
@@ -114,7 +112,7 @@ export const initialState = {
       required: true,
       step: 1,
     },
-    lastName: {
+    last_name: {
       condition: (value) => {
         if (!value) {
           return {
@@ -144,10 +142,25 @@ export const initialState = {
       required: true,
       step: 2,
     },
+    gender: {
+      condition: (value) => {
+        if (!value) {
+          return {
+            passed: false,
+            error: "El genero es requerido",
+          };
+        }
+        return {
+          passed: true,
+        };
+      },
+      required: true,
+      step: 2,
+    },
   },
   inputFields: [
     {
-      name: "name",
+      name: "first_name",
       type: "text",
       placeholder: "Nombre",
       label: "Nombre",
@@ -155,7 +168,7 @@ export const initialState = {
       step: 1,
     },
     {
-      name: "lastName",
+      name: "last_name",
       type: "text",
       placeholder: "Apellido",
       label: "Apellido",
@@ -193,6 +206,29 @@ export const initialState = {
       label: "Confirmar contraseña",
       required: true,
       step: 3,
+    },
+    {
+      name: "gender",
+      type: "select",
+      placeholder: "Género",
+      label: "Género",
+      messageError: "",
+      required: true,
+      options: [
+        {
+          value: "female",
+          label: "Femenino",
+        },
+        {
+          value: "male",
+          label: "Masculino",
+        },
+        {
+          value: "not_specified",
+          label: "Prefiero no responder",
+        },
+      ],
+      step: 2,
     },
   ],
 };

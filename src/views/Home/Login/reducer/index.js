@@ -27,6 +27,7 @@ const reducer = (state = initialState, action) => {
         },
       };
     case actions.LOGIN_SUCCESS:
+      localStorage.setItem("userInfo", JSON.stringify(action.payload));
       return {
         ...state,
         login: {
