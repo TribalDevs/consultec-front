@@ -6,7 +6,7 @@ import { main } from "utils/colors";
 // Modifiers for buttons
 export const BUTTON_MODIFIERS = {
   extraSmall: () => `
-  padding: 4px 0.5rem;
+  padding: 0.2rem;
   font-size: ${typeScale.helperText};
   min-width: 1rem;
   `,

@@ -10,11 +10,12 @@ export async function petition({
   params,
 }) {
   const { REQUEST, SUCCESS, FAILURE } = constants;
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   let petitionHeaders = {
     "Content-Type": "application/json",
   };
   if (token) {
-    petitionHeaders["token"] = token;
+    petitionHeaders["Authorization"] = `Bearer ${userInfo.access}`;
   }
   let paramsPetition = {};
   if (headers) {

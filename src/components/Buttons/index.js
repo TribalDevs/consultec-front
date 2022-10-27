@@ -35,6 +35,10 @@ const PrimaryButton = styled(ButtonBase)`
     background-color: ${(props) =>
       props.theme.buttons.primary.hover.background};
     color: ${(props) => props.theme.buttons.primary.hover.color};
+    i,
+    svg {
+      color: ${(props) => props.theme.buttons.primary.hover.color};
+    }
   }
   // Disabled
   &:disabled {
@@ -95,6 +99,10 @@ const TertiaryButton = styled(ButtonBase)`
     background-color: ${(props) =>
       props.theme.buttons.tertiary.hover.background};
     color: ${(props) => props.theme.buttons.tertiary.hover.color};
+    i,
+    svg {
+      color: ${(props) => props.theme.buttons.tertiary.hover.color};
+    }
   }
   // Disabled
   &:disabled {
@@ -128,6 +136,7 @@ export const Button = ({
   language,
   loading,
   error,
+  icon,
   ...props
 }) => {
   // Get button type
@@ -155,8 +164,8 @@ export const Button = ({
       disabled={disabled}
       onClick={onClick}
       modifiers={modifiers}
-      {...props}
       className={styles.button}
+      {...props}
     >
       {loading ? (
         <>
@@ -169,7 +178,10 @@ export const Button = ({
           {formatLanguageText({ language, en: error.en, es: error.es })}
         </>
       ) : (
-        formatLanguageText({ language, en: text.en, es: text.es })
+        <>
+          {icon && icon}
+          {text && formatLanguageText({ language, en: text.en, es: text.es })}
+        </>
       )}
     </ButtonType>
   );

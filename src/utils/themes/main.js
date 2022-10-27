@@ -42,16 +42,16 @@ export const mainTheme = {
       background: main[100],
       color: text.textInverted,
       hover: {
-        background: main[500],
-        color: text.textInverted,
+        background: main[600],
+        color: text.text,
       },
     },
     secondary: {
       background: main[200],
-      color: text.text,
+      color: text.textInverted,
       hover: {
         background: main[400],
-        color: text.textInverted,
+        color: text.text,
       },
     },
     tertiary: {

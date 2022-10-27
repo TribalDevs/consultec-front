@@ -3,10 +3,12 @@ import React, { useReducer, useEffect } from "react";
 import { reducer, actions, initialState } from "./reducer";
 import { formValidator } from "utils";
 import { TextComponent } from "components";
-import "./styles.sass";
 import { petition } from "api";
+import { useNavigate } from "react-router-dom";
+import "./styles.sass";
 export default function LoginScreen() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const navigate = useNavigate();
   const handleChange = (e) => {
     dispatch({
       type: actions.UPDATE_FORM_DATA,
@@ -35,7 +37,11 @@ export default function LoginScreen() {
       });
     }
   };
-
+  useEffect(() => {
+    if (state.login.success) {
+      navigate("/");
+    }
+  }, [state.login.success, navigate]);
   return (
     <div className="login__screen">
       <div className="login__screen__left"></div>
@@ -60,6 +66,7 @@ export default function LoginScreen() {
                 error: state.errors[input.name].error,
                 message: state.errors[input.name].message,
               }}
+              disabled={state.login.loading}
             />
           ))}
           <Button
@@ -71,6 +78,7 @@ export default function LoginScreen() {
             type="primary"
             onClick={handleSubmit}
             loading={state.login.loading}
+            disabled={state.login.loading}
           />
         </Form>
         <div className="login__footer">

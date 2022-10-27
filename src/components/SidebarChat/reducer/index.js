@@ -3,51 +3,47 @@ import { initialState } from "./constants";
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case actions.SET_ERRORS:
+    case actions.UPDATE_QUERY:
       return {
         ...state,
-        errors: action.payload,
+        query: action.payload,
       };
-    case actions.UPDATE_FORM_DATA:
+    case actions.SEARCH_REQUEST:
       return {
         ...state,
-        formData: {
-          ...state.formData,
-          [action.payload.name]: action.payload.value,
-        },
-      };
-    case actions.LOGIN_REQUEST:
-      return {
-        ...state,
-        login: {
-          ...state.login,
+        search: {
+          ...state.search,
           loading: true,
           error: null,
           success: false,
         },
       };
-    case actions.LOGIN_SUCCESS:
-      localStorage.setItem("userInfo", JSON.stringify(action.payload));
+    case actions.SEARCH_SUCCESS:
       return {
         ...state,
-        login: {
-          ...state.login,
+        search: {
+          ...state.search,
           loading: false,
           error: null,
           success: true,
-          data: action.payload,
+          data: action.payload.users || [],
         },
       };
-    case actions.LOGIN_FAILURE:
+    case actions.SEARCH_FAIL:
       return {
         ...state,
-        login: {
-          ...state.login,
+        search: {
+          ...state.search,
           loading: false,
           error: action.payload,
           success: false,
         },
       };
+    case actions.SET_SELECTED_USER:
+      return {
+        ...state,
+        selectedUser: action.payload,
+      }
     default:
       return state;
   }
