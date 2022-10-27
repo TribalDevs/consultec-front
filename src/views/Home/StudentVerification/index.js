@@ -1,7 +1,8 @@
 import React from 'react'
 import { TextComponent } from 'components'
 import "./styles.sass"
-import { useState } from 'react'
+import { useReducer } from 'react'
+import { reducer, actions, initialState } from './reducer'
 
 export default function StudentVerification() {
   const testStudents = [
@@ -16,24 +17,34 @@ export default function StudentVerification() {
       status: "verified",
     },
   ]
-  var auxStudents = [
-    {
-      name: "Juan Perez",
-      email: "juan@perez.com",
-      status: "pending",
-    },
-    {
-      name: "Maria Perez",
-      email: "maria@perez.com",
-      status: "verified",
-    },
-  ]
-  const [selected, setSelected] = useState("")
-
-  const handleSelect = (e) => {
-    console.log(e.target.value)
-    setSelected(e.target.value)
-    auxStudents = testStudents.filter((student) => student.status === e.target.value)
+  const [state, dispatch] = useReducer(reducer, initialState)
+  
+  const renderStudents = () => {
+    
+    let auxStudents = testStudents
+    if (state.filterStudents != "all") {
+      auxStudents = testStudents?.filter(
+        (student) => student.status == state.filterStudents
+      );
+    }
+    return auxStudents.map((student, index) => (
+      <tr key={index}>
+        <td>{student.name}</td>
+        <td>{student.email}</td>
+        <td>{student.status}</td>
+        <td>
+          <button>
+            <TextComponent
+              type="h3"
+              text={{
+                en: "Verify",
+                es: "Verificar",
+              }}
+            />
+          </button>
+        </td>
+      </tr>
+    ))
   }
   return (
     <div className='verification__component'>
@@ -55,7 +66,13 @@ export default function StudentVerification() {
               es: "Filtro",
             }}
           />
-          <select value={selected} onChange={handleSelect}>
+          <select 
+            value={state.filterStudents} 
+            onChange={(e) => {
+              dispatch({type: 
+                actions.FILTER_STUDENTS, 
+                payload: e.target.value})
+            }}>
             <option value="all">
               <TextComponent
                 type="h2"
@@ -127,24 +144,7 @@ export default function StudentVerification() {
             </tr>
           </thead>
           <tbody>
-            {auxStudents.map((student, index) => (
-              <tr key={index}>
-                <td>{student.name}</td>
-                <td>{student.email}</td>
-                <td>{student.status}</td>
-                <td>
-                  <button>
-                    <TextComponent
-                      type="h3"
-                      text={{
-                        en: "Verify",
-                        es: "Verificar",
-                      }}
-                    />
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {renderStudents()}
           </tbody>
         </table>
       </div>
