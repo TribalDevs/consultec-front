@@ -33,6 +33,7 @@ export default function StudentVerification() {
         <td>{student.email}</td>
         <td>{student.status}</td>
         <td>
+        {student.status == "pending" ? (
           <button>
             <TextComponent
               type="h3"
@@ -42,6 +43,15 @@ export default function StudentVerification() {
               }}
             />
           </button>
+        ) : (
+            <TextComponent
+              type="h3"
+              text={{
+                en: "Verified",
+                es: "Verificado",
+              }}
+            />)
+        }          
         </td>
       </tr>
     ))
