@@ -149,6 +149,9 @@ export const SidebarChat = () => {
                       key={index}
                       onClick={() => {
                         setSelectedUser(user);
+                        dispatch({
+                          type: actions.CLEAR_SEARCH,
+                        });
                         // add query user to url
                         window.history.pushState(
                           {},
