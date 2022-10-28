@@ -185,7 +185,7 @@ export const initialState = {
     },
     {
       name: "identifier_number",
-      type: "text",
+      type: "number",
       placeholder: "Número de identificación",
       label: "Número de identificación",
       required: true,
