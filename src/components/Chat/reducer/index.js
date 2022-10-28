@@ -24,6 +24,7 @@ const reducer = (state = initialState, action) => {
           success: true,
           data: action.payload,
         },
+        chatMessages: action.payload.message,
       };
     case actions.VALIDATE_CONVERSATION_FAIL:
       return {
@@ -37,6 +38,7 @@ const reducer = (state = initialState, action) => {
         },
       };
     case actions.START_CONVERSATION:
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
       return {
         ...state,
         startConversation: {
@@ -46,7 +48,17 @@ const reducer = (state = initialState, action) => {
           success: false,
           data: null,
         },
-        message: ""
+        message: "",
+        chatMessages: [
+          ...state.chatMessages,
+          {
+            message: state.message,
+            created_at: new Date(),
+            user: {
+              id: userInfo.id,
+            },
+          },
+        ],
       };
     case actions.START_CONVERSATION_SUCCESS:
       return {
@@ -74,6 +86,25 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         message: action.payload,
+      };
+    case actions.SET_USER_SELECTED_REAL_TIME_INFO:
+      return {
+        ...state,
+        userSelectedStatus: action.payload,
+      };
+    case actions.ADD_MESSAGE_RECEIVED:
+      return {
+        ...state,
+        chatMessages: [
+          ...state.chatMessages,
+          {
+            message: action.payload.message,
+            created_at: new Date(),
+            user: {
+              ...action.payload.user,
+            },
+          },
+        ],
       };
     default:
       return state;

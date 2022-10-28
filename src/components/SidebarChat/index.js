@@ -1,8 +1,9 @@
 import { TextComponent } from "components/Texts";
-import React, { useReducer, useContext } from "react";
+import React, { useReducer, useContext, useEffect } from "react";
 import { ChatContext } from "views/Home/HomeScreen";
 import { reducer, actions, initialState } from "./reducer";
 import Icon from "components/icon";
+import { Loader } from "components/Loader";
 import "./styles.sass";
 import { Form } from "components/Forms";
 import { Input } from "components/Inputs";
@@ -32,6 +33,19 @@ export const SidebarChat = () => {
       token: true,
     });
   };
+  useEffect(() => {
+    petition({
+      url: "/user/conversation/active/",
+      method: "GET",
+      constants: {
+        REQUEST: actions.GET_ACTIVE_CONVERSATIONS_REQUEST,
+        SUCCESS: actions.GET_ACTIVE_CONVERSATIONS_SUCCESS,
+        FAILURE: actions.GET_ACTIVE_CONVERSATIONS_FAIL,
+      },
+      dispatch,
+      token: true,
+    });
+  }, []);
   return (
     <div className="sidebar__chat">
       <div className="sidebar__chat__top">
@@ -78,6 +92,7 @@ export const SidebarChat = () => {
               </div>
             </Form>
           </div>
+
           {state.search.loading ? (
             <div className="loading">Loading...</div>
           ) : (
@@ -88,7 +103,15 @@ export const SidebarChat = () => {
                     <div
                       className="user__list__item"
                       key={index}
-                      onClick={() => setSelectedUser(user)}
+                      onClick={() => {
+                        setSelectedUser(user);
+                        // add query user to url
+                        window.history.pushState(
+                          {},
+                          "",
+                          `?conversation=${user.id}`
+                        );
+                      }}
                     >
                       <TextComponent
                         type="h4"
@@ -124,6 +147,40 @@ export const SidebarChat = () => {
             />
           </div>
         ))} */}
+        </div>
+        <div className="sidebar__chats">
+          {state.getActiveConversations.loading ? (
+            <Loader />
+          ): (
+            <>
+                      {state.getActiveConversations.data?.map((user) => (
+            <div
+              className="sidebar__chat__item"
+              onClick={() => {
+                setSelectedUser(user.user[0]);
+                // add query user to url
+                window.history.pushState({}, "", `?conversation=${user.id}`);
+              }}
+            >
+              <div className="sidebar__chat__item__image">
+                <img
+                  src="https://www.w3schools.com/howto/img_avatar.png"
+                  alt="profile"
+                />
+              </div>
+
+              <div className="sidebar__chat__item__info">
+                <TextComponent
+                  type="span"
+                  text={user.user[0].first_name + " " + user.user[0].last_name}
+                  disableLocales={true}
+                />
+              </div>
+            </div>
+          ))}
+            </>
+          )}
+
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from "react";
+import React, { useReducer, useEffect, useContext } from "react";
 import { reducer, actions, initialState } from "./reducer";
 import { Message } from "components/Message";
 import "./styles.sass";
@@ -7,11 +7,18 @@ import { TextComponent } from "components/Texts";
 import { Form } from "components/Forms";
 import Icon from "components/icon";
 import { petition } from "api";
+import { useQuery } from "hooks";
+import { Loader } from "components/Loader";
+import { ChatContext } from "views/Home/HomeScreen";
 export const Chat = ({ user }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  useEffect(() => {
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const query = useQuery();
+  const { socket, socketActions } = useContext(ChatContext);
+  const controller = new AbortController();
+  const getConversation = (id) => {
     petition({
-      url: `/user/conversation/${user.id}/messages/`,
+      url: `/user/conversation/validate/history/${id}/`,
       method: "GET",
       constants: {
         REQUEST: actions.VALIDATE_CONVERSATION,
@@ -20,15 +27,58 @@ export const Chat = ({ user }) => {
       },
       dispatch,
       token: true,
+      controller,
     });
+  };
+  const conversation = query.get("conversation");
+  // useEffect(() => {
+  //   if (conversation) {
+  //     getConversation(conversation);
+  //   }
+  // }, [conversation]);
+  useEffect(() => {
+    if (user.id) {
+      getConversation(user.id);
+      socket.emit(socketActions.checkUserStatus, user.id);
+    }
     dispatch({
       type: actions.UPDATE_MESSAGE,
       payload: "",
     });
+    return () => {
+      socket.off(socketActions.checkUserStatus);
+    };
   }, [user]);
-  const handleStartConversation = () => {
+  useEffect(() => {
+    if (state.validateConversation.loading) {
+      console.log("cancelling request")
+      controller.abort();
+    }
+  }, [user]);
+  useEffect(() => {
+    socket.on(socketActions.sendUserStatus, (data) => {
+      dispatch({
+        type: actions.SET_USER_SELECTED_REAL_TIME_INFO,
+        payload: data,
+      });
+    });
+    socket.on(socketActions.receiveMessage, (data) => {
+      dispatch({
+        type: actions.ADD_MESSAGE_RECEIVED,
+        payload: data,
+      });
+      let chat__history = document.getElementById("chat__history");
+      // scroll to bottom
+      chat__history.scrollTop = chat__history.scrollHeight;
+    });
+    return () => {
+      socket.off(socketActions.sendUserStatus);
+      socket.off(socketActions.receiveMessage);
+    };
+  }, [socketActions.sendUserStatus, socket]);
+  const handleSendMessage = () => {
     petition({
-      url: `/user/conversation/${user.id}/new/`,
+      url: `/user/conversation/new/${user.id}/`,
       method: "POST",
       body: {
         message: state.message,
@@ -41,6 +91,25 @@ export const Chat = ({ user }) => {
       dispatch,
       token: true,
     });
+    if (state.userSelectedStatus.status === "online") {
+      socket.emit(socketActions.sendMessage, {
+        receiver: {
+          socketId: state.userSelectedStatus.socketId,
+        },
+        message: state.message,
+        sender: {
+          id: userInfo.id,
+        },
+        user: {
+          id: userInfo.id,
+          first_name: userInfo.first_name,
+          last_name: userInfo.last_name,
+          role: userInfo.role,
+        },
+      });
+    }
+    let chat__history = document.getElementById("chat__history");
+    chat__history.scrollTop = chat__history.scrollHeight;
   };
   return (
     <div className="chat__component">
@@ -52,18 +121,31 @@ export const Chat = ({ user }) => {
             es: user.first_name + " " + user.last_name,
           }}
         />
-        <TextComponent
-          type="p"
-          text={{
-            en: `user id: ${user.id}`,
-            es: `user id: ${user.id}`,
-          }}
-        />
+        {state.userSelectedStatus && (
+          <TextComponent
+            type="p"
+            text={state.userSelectedStatus.status}
+            disableLocales={true}
+          />
+        )}
       </div>
-      <div className="chat__history">
-        {state.validateConversation.loading ? "Loading..." : <>No messages</>}
-        {state.startConversation.loading ? "Starting conversation..." : ""}
-      </div>
+      {state.validateConversation.loading ? (
+        <div className="chat__loading">
+          <Loader />
+        </div>
+      ) : (
+        <div className="chat__history" id="chat__history">
+          {state.chatMessages.map((message, index) => (
+            <Message
+              message={message.message}
+              created_at={message.created_at}
+              myMessage={message.user.id === userInfo.id}
+              key={index}
+            />
+          ))}
+        </div>
+      )}
+
       <div className="chat__input">
         <Form>
           <input
@@ -85,7 +167,7 @@ export const Chat = ({ user }) => {
                     !state.validateConversation.loading &&
                     !state.startConversation.loading
                   ) {
-                    handleStartConversation();
+                    handleSendMessage();
                   }
                 }
               }}

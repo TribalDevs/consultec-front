@@ -12,9 +12,12 @@ export const TextComponent = ({
   text,
   type = "p",
   modifiers = [],
+  disableLocales = false,
   ...props
 }) => {
-  const content = formatLanguageText({ language, en: text.en, es: text.es });
+  const content = !disableLocales
+    ? formatLanguageText({ language, en: text.en, es: text.es })
+    : text;
   const Container = styled(type)`
     color: ${(props) => props.theme.textColor};
     ${applyStyleModifiers(HEADERS_MODIFIERS)}

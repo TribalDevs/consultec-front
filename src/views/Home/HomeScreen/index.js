@@ -44,6 +44,8 @@ export default function HomeScreen() {
           dispatch({ type: actions.SET_SELECTED_USER, payload: user }),
         userDataSocket: state.userDataSocket,
         userInfo: JSON.parse(localStorage.getItem("userInfo")),
+        socket,
+        socketActions: state.socketActions,
       }}
     >
       <div className="home__screen">
