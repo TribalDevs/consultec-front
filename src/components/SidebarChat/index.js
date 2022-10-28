@@ -47,16 +47,43 @@ export const SidebarChat = () => {
       token: true,
     });
     socket.on(socketActions.sendUsersStatus, (data) => {
+      console.log(data);
       dispatch({
         type: actions.SET_USERS_STATUS,
         payload: data,
       });
     });
+    socket.on(socketActions.userHasDisconnected, (data) => {
+      dispatch({
+        type: actions.SET_USER_STATUS,
+        payload: {
+          user: data,
+          status: "offline",
+        },
+      });
+    });
+    socket.on(socketActions.userHasConnected, (data) => {
+      dispatch({
+        type: actions.SET_USER_STATUS,
+        payload: {
+          user: data.id,
+          status: "online",
+        },
+      });
+    });
+    return () => {
+      socket.off(socketActions.sendUsersStatus);
+      socket.off(socketActions.userHasDisconnected);
+      socket.off(socketActions.userHasConnected);
+    };
   }, []);
   useEffect(() => {
     if (state.getActiveConversations.success) {
       socket.emit(socketActions.requestUsersStatus, state.usersIds);
     }
+    return () => {
+      socket.off(socketActions.requestUsersStatus);
+    };
   }, [state.getActiveConversations.success]);
   return (
     <div className="sidebar__chat">

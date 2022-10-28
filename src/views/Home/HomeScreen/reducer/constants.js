@@ -9,6 +9,8 @@ export const initialState = {
     receiveMessage: "receiveMessage",
     requestUsersStatus: "requestUsersStatus",
     sendUsersStatus: "sendUsersStatus",
+    userHasDisconnected: "userHasDisconnected",
+    userHasConnected: "userHasConnected",
   },
   userDataSocket: null,
 };

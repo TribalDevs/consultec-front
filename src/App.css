@@ -8,11 +8,11 @@
   width: 0.7rem;
   height: 0.7rem;
   border-radius: 100%;
-  background-color: green;
+  background-color: #66f066;
 }
 .offline__status{
   width: 0.7rem;
   height: 0.7rem;
   border-radius: 100%;
-  background-color: red;
+  background-color: #f06666;
 }
