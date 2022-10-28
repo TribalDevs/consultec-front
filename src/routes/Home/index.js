@@ -2,6 +2,7 @@ import { lazy } from "react";
 const HomeScreen = lazy(() => import("views/Home/HomeScreen"));
 const LoginScreen = lazy(() => import("views/Home/Login"));
 const RegisterScreen = lazy(() => import("views/Home/Register"));
+const StudentVerification = lazy(() => import("views/Home/StudentVerification"))
 export const homeRoutes = [
   {
     path: "/",
@@ -20,6 +21,13 @@ export const homeRoutes = [
   {
     path: "/register",
     component: RegisterScreen,
+    exact: true,
+    isPrivate: false,
+    accessWithoutLogin: true,
+  },
+  {
+    path: "/student-verification",
+    component: StudentVerification,
     exact: true,
     isPrivate: false,
     accessWithoutLogin: true,
