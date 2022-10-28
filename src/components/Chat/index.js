@@ -161,10 +161,10 @@ export const Chat = ({ user }) => {
             disableLocales={true}
           />
         )}
-        {state.userSelectedStatus.socketId && (
+        {state.userSelectedStatus?.socketId && (
           <TextComponent
             type="p"
-            text={`Socket ID: ${state.userSelectedStatus.socketId}`}
+            text={`Socket ID: ${state.userSelectedStatus?.socketId}`}
             disableLocales={true}
           />
         )}
