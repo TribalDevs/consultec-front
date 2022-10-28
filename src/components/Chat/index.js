@@ -124,23 +124,23 @@ export const Chat = ({ user }) => {
       dispatch,
       token: true,
     });
-    if (state.userSelectedStatus.status === "online") {
-      socket.emit(socketActions.sendMessage, {
-        receiver: {
-          socketId: state.userSelectedStatus.socketId,
-        },
-        message: state.message,
-        sender: {
-          id: userInfo.id,
-        },
-        user: {
-          id: userInfo.id,
-          first_name: userInfo.first_name,
-          last_name: userInfo.last_name,
-          role: userInfo.role,
-        },
-      });
-    }
+    console.log(state.userSelectedStatus);
+
+    socket.emit(socketActions.sendMessage, {
+      receiver: {
+        socketId: state.userSelectedStatus?.socketId,
+      },
+      message: state.message,
+      sender: {
+        id: userInfo.id,
+      },
+      user: {
+        id: userInfo.id,
+        first_name: userInfo.first_name,
+        last_name: userInfo.last_name,
+        role: userInfo.role,
+      },
+    });
     let chat__history = document.getElementById("chat__history");
     chat__history.scrollTop = chat__history.scrollHeight;
   };
