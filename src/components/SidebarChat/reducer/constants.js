@@ -7,4 +7,10 @@ export const initialState = {
     data: null,
   },
   selectedUser: null,
+  getActiveConversations: {
+    loading: false,
+    error: null,
+    success: false,
+    data: null,
+  }
 };

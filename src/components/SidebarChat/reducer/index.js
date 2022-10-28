@@ -43,7 +43,38 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         selectedUser: action.payload,
-      }
+      };
+    case actions.GET_ACTIVE_CONVERSATIONS_REQUEST:
+      return {
+        ...state,
+        getActiveConversations: {
+          ...state.getActiveConversations,
+          loading: true,
+          error: null,
+          success: false,
+        },
+      };
+    case actions.GET_ACTIVE_CONVERSATIONS_SUCCESS:
+      return {
+        ...state,
+        getActiveConversations: {
+          ...state.getActiveConversations,
+          loading: false,
+          error: null,
+          success: true,
+          data: action.payload.message || [],
+        },
+      };
+    case actions.GET_ACTIVE_CONVERSATIONS_FAIL:
+      return {
+        ...state,
+        getActiveConversations: {
+          ...state.getActiveConversations,
+          loading: false,
+          error: action.payload,
+          success: false,
+        },
+      };
     default:
       return state;
   }

@@ -8,6 +8,7 @@ export async function petition({
   dispatch,
   headers,
   params,
+  controller = null,
 }) {
   const { REQUEST, SUCCESS, FAILURE } = constants;
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -25,6 +26,9 @@ export async function petition({
     paramsPetition = params;
   }
   try {
+    if (controller) {
+      console.log(controller.signal);
+    }
     dispatch({ type: REQUEST });
     const { data } = await axios({
       method,
@@ -32,6 +36,7 @@ export async function petition({
       data: body,
       headers: petitionHeaders,
       params: paramsPetition,
+      signal: controller ? controller.signal : null,
     });
     dispatch({ type: SUCCESS, payload: data });
   } catch (error) {
