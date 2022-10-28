@@ -66,6 +66,7 @@ export const Chat = ({ user }) => {
       });
     });
     socket.on(socketActions.receiveMessage, (data) => {
+      console.log(data);
       dispatch({
         type: actions.ADD_MESSAGE_RECEIVED,
         payload: data,
