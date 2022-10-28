@@ -71,6 +71,13 @@ export const Chat = ({ user }) => {
         type: actions.ADD_MESSAGE_RECEIVED,
         payload: data,
       });
+      dispatch({
+        type: actions.SET_USER_SELECTED_REAL_TIME_INFO,
+        payload: {
+          ...state.userSelectedStatus,
+          socketId: data.senderSocketId,
+        },
+      });
       let chat__history = document.getElementById("chat__history");
       // scroll to bottom
       chat__history.scrollTop = chat__history.scrollHeight;
@@ -91,7 +98,7 @@ export const Chat = ({ user }) => {
         dispatch({
           type: actions.SET_USER_SELECTED_REAL_TIME_INFO,
           payload: {
-            ...state.userSelectedStatus,
+            socketId: data.socketId,
             status: "online",
           },
         });
