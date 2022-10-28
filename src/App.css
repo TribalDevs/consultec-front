@@ -4,3 +4,15 @@
   gap: 1rem;
   flex-wrap: wrap;
 }
+.online__status{
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 100%;
+  background-color: green;
+}
+.offline__status{
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 100%;
+  background-color: red;
+}

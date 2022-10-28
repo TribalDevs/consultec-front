@@ -8,8 +8,8 @@ export const homeRoutes = [
     path: "/",
     component: HomeScreen,
     exact: true,
-    isPrivate: false,
-    accessWithoutLogin: true,
+    isPrivate: true,
+    accessWithoutLogin: false,
   },
   {
     path: "/login",

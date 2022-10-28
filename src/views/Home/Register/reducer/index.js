@@ -27,6 +27,13 @@ const reducer = (state = initialState, action) => {
         },
       };
     case actions.REGISTER_SUCCESS:
+      localStorage.setItem(
+        "userInfo",
+        JSON.stringify({
+          ...action.payload.user,
+          access: action.payload.access,
+        })
+      );
       return {
         ...state,
         register: {
@@ -51,7 +58,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         step: action.payload,
-      }
+      };
     default:
       return state;
   }
