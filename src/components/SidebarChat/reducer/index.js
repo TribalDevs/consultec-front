@@ -109,7 +109,11 @@ const reducer = (state = initialState, action) => {
           data: updatedUsers2,
         },
       };
-
+    case actions.CLEAR_SEARCH:
+      return {
+        ...state,
+        search: initialState.search,
+      };
     default:
       return state;
   }

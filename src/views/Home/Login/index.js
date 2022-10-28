@@ -6,6 +6,7 @@ import { TextComponent } from "components";
 import { petition } from "api";
 import { useNavigate } from "react-router-dom";
 import "./styles.sass";
+import { toast } from "react-hot-toast";
 export default function LoginScreen() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const navigate = useNavigate();
@@ -42,6 +43,11 @@ export default function LoginScreen() {
       navigate("/");
     }
   }, [state.login.success, navigate]);
+  useEffect(() => {
+    if (state.login.error) {
+      toast.error(`Error al iniciar sesión: ${state.login.error.detail}`);
+    }
+  }, [state.login.error]);
   return (
     <div className="login__screen">
       <div className="login__screen__left"></div>

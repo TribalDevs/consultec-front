@@ -5,6 +5,7 @@ import { formValidator } from "utils";
 import "./styles.sass";
 import { petition } from "api";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 export default function RegisterScreen() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const navigate = useNavigate();
@@ -74,6 +75,11 @@ export default function RegisterScreen() {
       navigate("/");
     }
   }, [state.register.success, navigate]);
+  useEffect(() => {
+    if (state.register.error) {
+      toast.error(`Error al registrar usuario: ${state.register.error}`);
+    }
+  }, [state.register.error]);
   return (
     <div className="register__screen">
       <div className="register__screen__left"></div>
