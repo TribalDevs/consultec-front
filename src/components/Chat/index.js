@@ -98,7 +98,7 @@ export const Chat = ({ user }) => {
         dispatch({
           type: actions.SET_USER_SELECTED_REAL_TIME_INFO,
           payload: {
-            ...state.userSelectedStatus,
+            socketId: data.socketId,
             status: "online",
           },
         });
