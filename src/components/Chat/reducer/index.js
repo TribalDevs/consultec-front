@@ -106,6 +106,21 @@ const reducer = (state = initialState, action) => {
           },
         ],
       };
+    case actions.SET_ABORT_CONTROLLER:
+      return {
+        ...state,
+        abortController: action.payload,
+      };
+    case actions.CANCEL_REQUEST:
+      return {
+        ...state,
+        validateConversation: {
+          ...state.validateConversation,
+          loading: true,
+          success: false,
+          data: null,
+        },
+      }
     default:
       return state;
   }

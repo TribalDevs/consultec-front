@@ -4,7 +4,7 @@ import { Chat } from "components/Chat";
 import { SidebarChat } from "components/SidebarChat";
 import io from "socket.io-client";
 import "./styles.sass";
-const socket = io.connect("http://localhost:5051");
+const socket = io.connect(process.env.REACT_APP_SOCKET_URL);
 export const ChatContext = createContext();
 export default function HomeScreen() {
   const [state, dispatch] = React.useReducer(reducer, initialState);

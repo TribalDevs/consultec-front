@@ -15,8 +15,12 @@ export const Chat = ({ user }) => {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const query = useQuery();
   const { socket, socketActions } = useContext(ChatContext);
-  const controller = new AbortController();
   const getConversation = (id) => {
+    const controller = new AbortController();
+    dispatch({
+      type: actions.SET_ABORT_CONTROLLER,
+      payload: controller,
+    });
     petition({
       url: `/user/conversation/validate/history/${id}/`,
       method: "GET",
@@ -51,8 +55,8 @@ export const Chat = ({ user }) => {
   }, [user]);
   useEffect(() => {
     if (state.validateConversation.loading) {
-      console.log("cancelling request")
-      controller.abort();
+      state.abortController.abort();
+
     }
   }, [user]);
   useEffect(() => {

@@ -20,4 +20,5 @@ export const initialState = {
   message: "",
   chatMessages: [],
   userSelectedStatus: null,
+  abortController: null,
 };

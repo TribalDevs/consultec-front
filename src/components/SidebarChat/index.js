@@ -11,7 +11,8 @@ import { petition } from "api";
 import { Button } from "components/Buttons";
 export const SidebarChat = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { setSelectedUser, userDataSocket, userInfo } = useContext(ChatContext);
+  const { setSelectedUser, userDataSocket, userInfo, socket, socketActions } =
+    useContext(ChatContext);
 
   const handleLogout = () => {
     localStorage.removeItem("userInfo");
@@ -45,7 +46,18 @@ export const SidebarChat = () => {
       dispatch,
       token: true,
     });
+    socket.on(socketActions.sendUsersStatus, (data) => {
+      dispatch({
+        type: actions.SET_USERS_STATUS,
+        payload: data,
+      });
+    });
   }, []);
+  useEffect(() => {
+    if (state.getActiveConversations.success) {
+      socket.emit(socketActions.requestUsersStatus, state.usersIds);
+    }
+  }, [state.getActiveConversations.success]);
   return (
     <div className="sidebar__chat">
       <div className="sidebar__chat__top">
@@ -115,10 +127,8 @@ export const SidebarChat = () => {
                     >
                       <TextComponent
                         type="h4"
-                        text={{
-                          en: user.first_name + " " + user.last_name,
-                          es: user.first_name + " " + user.last_name,
-                        }}
+                        text={user.first_name + " " + user.last_name}
+                        disableLocales={true}
                       />
                     </div>
                   ))}
@@ -151,36 +161,49 @@ export const SidebarChat = () => {
         <div className="sidebar__chats">
           {state.getActiveConversations.loading ? (
             <Loader />
-          ): (
+          ) : (
             <>
-                      {state.getActiveConversations.data?.map((user) => (
-            <div
-              className="sidebar__chat__item"
-              onClick={() => {
-                setSelectedUser(user.user[0]);
-                // add query user to url
-                window.history.pushState({}, "", `?conversation=${user.id}`);
-              }}
-            >
-              <div className="sidebar__chat__item__image">
-                <img
-                  src="https://www.w3schools.com/howto/img_avatar.png"
-                  alt="profile"
-                />
-              </div>
+              {state.getActiveConversations.data?.map((user, index) => (
+                <div
+                  className="sidebar__chat__item"
+                  onClick={() => {
+                    setSelectedUser(user.user[0]);
+                    // add query user to url
+                    window.history.pushState(
+                      {},
+                      "",
+                      `?conversation=${user.id}`
+                    );
+                  }}
+                  key={index}
+                >
+                  <div className="sidebar__chat__item__image">
+                    <img
+                      src="https://www.w3schools.com/howto/img_avatar.png"
+                      alt="profile"
+                    />
+                  </div>
 
-              <div className="sidebar__chat__item__info">
-                <TextComponent
-                  type="span"
-                  text={user.user[0].first_name + " " + user.user[0].last_name}
-                  disableLocales={true}
-                />
-              </div>
-            </div>
-          ))}
+                  <div className="sidebar__chat__item__info">
+                    <div className="sidebar__chat__item__info__name">
+                      {user.user[0].status === "online" ? (
+                        <div className="online__status"></div>
+                      ) : (
+                        <div className="offline__status"></div>
+                      )}
+                      <TextComponent
+                        type="span"
+                        text={
+                          user.user[0].first_name + " " + user.user[0].last_name
+                        }
+                        disableLocales={true}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </>
           )}
-
         </div>
       </div>
 

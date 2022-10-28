@@ -7,6 +7,8 @@ export const initialState = {
     sendUserStatus: "sendUserStatus",
     sendMessage: "sendMessage",
     receiveMessage: "receiveMessage",
+    requestUsersStatus: "requestUsersStatus",
+    sendUsersStatus: "sendUsersStatus",
   },
   userDataSocket: null,
 };

@@ -64,6 +64,7 @@ const reducer = (state = initialState, action) => {
           success: true,
           data: action.payload.message || [],
         },
+        usersIds: action.payload.message.map((item) => item.user[0].id),
       };
     case actions.GET_ACTIVE_CONVERSATIONS_FAIL:
       return {
@@ -73,6 +74,25 @@ const reducer = (state = initialState, action) => {
           loading: false,
           error: action.payload,
           success: false,
+        },
+      };
+    case actions.SET_USERS_STATUS:
+      let updatedUsers = state.getActiveConversations.data;
+      updatedUsers.forEach((item, index) => {
+        let itemFromPayload = action.payload.filter(
+          (payloadItem) => payloadItem.id === item.user[0].id
+        );
+        if (itemFromPayload.length > 0) {
+          updatedUsers[index].user[0].status = itemFromPayload[0].status;
+        } else {
+          updatedUsers[index].user[0].status = "offline";
+        }
+      });
+      return {
+        ...state,
+        getActiveConversations: {
+          ...state.getActiveConversations,
+          data: updatedUsers,
         },
       };
     default:

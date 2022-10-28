@@ -12,5 +12,6 @@ export const initialState = {
     error: null,
     success: false,
     data: null,
-  }
+  },
+  usersIds: [],
 };
