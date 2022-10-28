@@ -56,7 +56,6 @@ export const Chat = ({ user }) => {
   useEffect(() => {
     if (state.validateConversation.loading) {
       state.abortController.abort();
-
     }
   }, [user]);
   useEffect(() => {
@@ -75,11 +74,33 @@ export const Chat = ({ user }) => {
       // scroll to bottom
       chat__history.scrollTop = chat__history.scrollHeight;
     });
+    socket.on(socketActions.userHasDisconnected, (data) => {
+      if (data === user.id) {
+        dispatch({
+          type: actions.SET_USER_SELECTED_REAL_TIME_INFO,
+          payload: {
+            ...state.userSelectedStatus,
+            status: "offline",
+          },
+        });
+      }
+    });
+    socket.on(socketActions.userHasConnected, (data) => {
+      if (data.id === user.id) {
+        dispatch({
+          type: actions.SET_USER_SELECTED_REAL_TIME_INFO,
+          payload: {
+            ...state.userSelectedStatus,
+            status: "online",
+          },
+        });
+      }
+    });
     return () => {
       socket.off(socketActions.sendUserStatus);
       socket.off(socketActions.receiveMessage);
     };
-  }, [socketActions.sendUserStatus, socket]);
+  }, []);
   const handleSendMessage = () => {
     petition({
       url: `/user/conversation/new/${user.id}/`,

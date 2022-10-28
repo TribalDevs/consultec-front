@@ -95,6 +95,21 @@ const reducer = (state = initialState, action) => {
           data: updatedUsers,
         },
       };
+    case actions.SET_USER_STATUS:
+      let updatedUsers2 = state.getActiveConversations.data;
+      updatedUsers2?.forEach((item, index) => {
+        if (item.user[0].id === action.payload.user) {
+          updatedUsers2[index].user[0].status = action.payload.status;
+        }
+      });
+      return {
+        ...state,
+        getActiveConversations: {
+          ...state.getActiveConversations,
+          data: updatedUsers2,
+        },
+      };
+
     default:
       return state;
   }
