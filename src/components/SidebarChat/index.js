@@ -109,6 +109,11 @@ export const SidebarChat = () => {
               }}
               type="p"
             />
+            <TextComponent
+              text={`Socket id: ${socket.id}` || "Socket id: No hay conexión"}
+              type="p"
+              disableLocales={true}
+            />
           </div>
         </div>
         <div className="sidebar__chats__container">

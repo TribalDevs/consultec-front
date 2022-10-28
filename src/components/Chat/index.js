@@ -161,6 +161,13 @@ export const Chat = ({ user }) => {
             disableLocales={true}
           />
         )}
+        {state.userSelectedStatus.socketId && (
+          <TextComponent
+            type="p"
+            text={`Socket ID: ${state.userSelectedStatus.socketId}`}
+            disableLocales={true}
+          />
+        )}
       </div>
       {state.validateConversation.loading ? (
         <div className="chat__loading">
