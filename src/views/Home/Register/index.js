@@ -1,11 +1,11 @@
-import { Form, Input, Button, TextComponent } from "components";
-import React, { useReducer, useEffect } from "react";
-import { reducer, actions, initialState } from "./reducer";
-import { formValidator } from "utils";
-import "./styles.sass";
 import { petition } from "api";
-import { useNavigate } from "react-router-dom";
+import { Button, Form, Input, TextComponent } from "components";
+import React, { useEffect, useReducer } from "react";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { formValidator } from "utils";
+import { actions, initialState, reducer } from "./reducer";
+import "./styles.sass";
 export default function RegisterScreen() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const navigate = useNavigate();
@@ -77,7 +77,11 @@ export default function RegisterScreen() {
   }, [state.register.success, navigate]);
   useEffect(() => {
     if (state.register.error) {
-      toast.error(`Error al registrar usuario: ${state.register.error}`);
+      if (Object.keys(state.register.error).length > 0) {
+        Object.keys(state.register.error).forEach((key) => {
+          toast.error(`${key}: ${state.register.error[key]}`);
+        });
+      }
     }
   }, [state.register.error]);
   return (
