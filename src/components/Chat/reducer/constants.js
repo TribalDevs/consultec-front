@@ -17,12 +17,6 @@ export const initialState = {
     success: false,
     data: null,
   },
-  getUserData: {
-    loading: false,
-    error: null,
-    success: false,
-    data: null,
-  },
   message: "",
   chatMessages: [],
   userSelectedStatus: null,

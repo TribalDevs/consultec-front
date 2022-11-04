@@ -126,37 +126,6 @@ const reducer = (state = initialState, action) => {
           data: null,
         },
       };
-    case actions.GET_USER_DATA:
-      return {
-        ...state,
-        getUserData: {
-          ...state.getUserData,
-          loading: true,
-          error: null,
-          success: false,
-        },
-      };
-    case actions.GET_USER_DATA_SUCCESS:
-      return {
-        ...state,
-        getUserData: {
-          ...state.getUserData,
-          loading: false,
-          error: null,
-          success: true,
-          data: action.payload,
-        },
-      };
-    case actions.GET_USER_DATA_FAIL:
-      return {
-        ...state,
-        getUserData: {
-          ...state.getUserData,
-          loading: false,
-          error: action.payload,
-          success: false,
-        },
-      };
 
     default:
       return state;

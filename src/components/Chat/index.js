@@ -7,6 +7,7 @@ import { Message } from "components/Message";
 import { TextComponent } from "components/Texts";
 import { useQuery } from "hooks";
 import React, { useContext, useEffect, useReducer } from "react";
+import { useNavigate } from "react-router-dom";
 import { ChatContext } from "views/Home/HomeScreen";
 import { actions, initialState, reducer } from "./reducer";
 import "./styles.sass";
@@ -14,6 +15,7 @@ export const Chat = ({ user }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const query = useQuery();
+  const navigate = useNavigate();
   const { socket, socketActions, setShowModalCall, setUserToCall } =
     useContext(ChatContext);
   const getConversation = (id) => {
@@ -39,22 +41,7 @@ export const Chat = ({ user }) => {
     let chat__history = document.getElementById("chat__history");
     chat__history.scrollTop = chat__history.scrollHeight;
   };
-  const conversation = query.get("conversation");
-  useEffect(() => {
-    // if (conversation) {
-    //   petition({
-    //     url: `/user/data/${conversation}/`,
-    //     method: "GET",
-    //     constants: {
-    //       REQUEST: actions.GET_USER_DATA,
-    //       SUCCESS: actions.GET_USER_DATA_SUCCESS,
-    //       FAILURE: actions.GET_USER_DATA_FAIL,
-    //     },
-    //     dispatch,
-    //     token: true,
-    //   });
-    // }
-  }, [conversation]);
+
   useEffect(() => {
     if (user.id) {
       getConversation(user.id);
@@ -75,6 +62,7 @@ export const Chat = ({ user }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
   const handleSendMessage = ({ useDocument = false }) => {
+    console.log(state.userSelectedStatus);
     let message = state.message;
     if (useDocument) {
       message = document.getElementById("chat__input").value;
@@ -97,7 +85,7 @@ export const Chat = ({ user }) => {
     });
     socket.emit(socketActions.sendMessage, {
       receiver: {
-        socketId: state.userSelectedStatus?.socketId,
+        socketId: state.userSelectedStatus.socketId,
       },
       message: message,
       sender: {
@@ -193,8 +181,7 @@ export const Chat = ({ user }) => {
     return () => {
       document.removeEventListener("keydown", onEnter);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.userSelectedStatus?.socketId]);
+  }, [state.userSelectedStatus, state.message]);
   // * Every time we receive a message we scroll to bottom
   useEffect(() => {
     handleScrollToBottom();
