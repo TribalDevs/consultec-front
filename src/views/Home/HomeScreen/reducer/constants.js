@@ -11,6 +11,18 @@ export const initialState = {
     sendUsersStatus: "sendUsersStatus",
     userHasDisconnected: "userHasDisconnected",
     userHasConnected: "userHasConnected",
+    callUser: "callUser",
+    rejectedCall: "rejectedCall",
+    endedCall: "endedCall",
   },
   userDataSocket: null,
+  showModalCall: false,
+  useToCallData: null,
+
+  caller: null,
+  receivingCall: false,
+  callEnded: false,
+  callAccepted: false,
+  rejectedCall: false,
+  calling: false,
 };

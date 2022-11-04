@@ -135,6 +135,19 @@ export const initialState = {
             error: "El número de identificación es requerido",
           };
         }
+        if (value.length < 6) {
+          return {
+            passed: false,
+            error:
+              "El número de identificación debe tener al menos 6 caracteres",
+          };
+        }
+        if (value.length > 6) {
+          return {
+            passed: false,
+            error: "El número de identificación debe tener máximo 6 caracteres",
+          };
+        }
         return {
           passed: true,
         };
@@ -215,6 +228,10 @@ export const initialState = {
       messageError: "",
       required: true,
       options: [
+        {
+          value: "",
+          label: "Seleccione un género",
+        },
         {
           value: "female",
           label: "Femenino",

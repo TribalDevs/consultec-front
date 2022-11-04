@@ -1,88 +1,94 @@
-import React from 'react'
-import { TextComponent } from 'components'
-import "./styles.sass"
-import { useReducer } from 'react'
-import { reducer, actions, initialState } from './reducer'
+import { petition } from "api";
+import { TextComponent } from "components";
+import React, { useEffect, useReducer } from "react";
+import { actions, initialState, reducer } from "./reducer";
+import "./styles.sass";
 
 export default function StudentVerification() {
-  const testStudents = [
-    {
-      name: "Juan Perez",
-      email: "juan@perez.com",
-      status: "pending",
-    },
-    {
-      name: "Maria Perez",
-      email: "maria@perez.com",
-      status: "verified",
-    },
-  ]
-  const [state, dispatch] = useReducer(reducer, initialState)
-  
+  const [state, dispatch] = useReducer(reducer, initialState);
+  useEffect(() => {
+    petition({
+      url: "/admin/users/",
+      method: "GET",
+      dispatch,
+      constants: {
+        REQUEST: actions.GET_STUDENTS_REQUEST,
+        SUCCESS: actions.GET_STUDENTS_SUCCESS,
+        FAILURE: actions.GET_STUDENTS_FAILURE,
+      },
+      token: true,
+    });
+  }, []);
+  const verifyStudent = (id) => {
+    petition({
+      url: `/admin/validate/${id}/`,
+      method: "POST",
+      body: {},
+      dispatch,
+      constants: {
+        REQUEST: actions.VERIFY_STUDENT_REQUEST,
+        SUCCESS: actions.VERIFY_STUDENT_SUCCESS,
+        FAILURE: actions.VERIFY_STUDENT_FAILURE,
+      },
+      token: true,
+    });
+  }
   const renderStudents = () => {
-    
-    let auxStudents = testStudents
-    if (state.filterStudents != "all") {
-      auxStudents = testStudents?.filter(
-        (student) => student.status == state.filterStudents
-      );
-    }
-    return auxStudents.map((student, index) => (
+    // let auxStudents = testStudents;
+    // if (state.filterStudents != "all") {
+    //   auxStudents = testStudents?.filter(
+    //     (student) => student.status == state.filterStudents
+    //   );
+    // }
+    return state.getStudents.data.map((student, index) => (
       <tr key={index}>
-        <td>{student.name}</td>
+        <td>{`${student.first_name} ${student.last_name}`}</td>
         <td>{student.email}</td>
         <td>{student.status}</td>
         <td>
-        {student.status == "pending" ? (
-          <button>
-            <TextComponent
-              type="h3"
-              text={{
-                en: "Verify",
-                es: "Verificar",
-              }}
-            />
-          </button>
-        ) : (
-            <TextComponent
-              type="h3"
-              text={{
-                en: "Verified",
-                es: "Verificado",
-              }}
-            />)
-        }          
+          {student.status == "pending" ? (
+            <button>
+              <TextComponent type="h3" text="Vericar" disableLocales />
+            </button>
+          ) : (
+            <TextComponent type="h3" text={"Verificado"} disableLocales />
+          )}
         </td>
       </tr>
-    ))
-  }
-  return (
-    <div className='verification__component'>
-      <div className='verification__header'>
+    ));
+  };
+  if (state.getStudents.error) {
+    return (
+      <div className="verification__component">
         <TextComponent
           type="h1"
-          text={{
-            en: "Student verification",
-            es: "Verificación de estudiantes",
-          }}
+          text={state.getStudents.error.detail}
+          disableLocales
         />
       </div>
-      <div className='verification__table'>
-        <div className='verification__table__filter'>
-          <TextComponent
-            type="h2"
-            text={{
-              en: "Filter",
-              es: "Filtro",
-            }}
-          />
-          <select 
-            value={state.filterStudents} 
+    );
+  }
+  return (
+    <div className="verification__component">
+      <div className="verification__header">
+        <TextComponent
+          type="h1"
+          text="Verificación de estudiantes"
+          disableLocales
+        />
+      </div>
+      <div className="verification__table">
+        <div className="verification__table__filter">
+          <TextComponent type="h2" text="Filtrar por estado" disableLocales />
+          {/* <select
+            value={state.filterStudents}
             onChange={(e) => {
-              dispatch({type: 
-                actions.FILTER_STUDENTS, 
-                payload: e.target.value})
-            }}>
+              dispatch({
+                type: actions.FILTER_STUDENTS,
+                payload: e.target.value,
+              });
+            }}
+          >
             <option value="all">
               <TextComponent
                 type="h2"
@@ -110,55 +116,36 @@ export default function StudentVerification() {
                 }}
               />
             </option>
-          </select>
+          </select> */}
         </div>
         <table>
           <thead>
             <tr>
               <th>
+                <TextComponent type="p" text={"Nombre"} disableLocales />
+              </th>
+              <th>
                 <TextComponent
-                  type="h2"
-                  text={{
-                    en: "Student",
-                    es: "Estudiante",
-                  }}
+                  type="p"
+                  text={"Correo electrónico"}
+                  disableLocales
                 />
               </th>
               <th>
                 <TextComponent
-                  type="h2"
-                  text={{
-                    en: "Email",
-                    es: "Correo electrónico",
-                  }}
+                  type="p"
+                  text={"Estado de verificación"}
+                  disableLocales
                 />
               </th>
               <th>
-                <TextComponent
-                  type="h2"
-                  text={{
-                    en: "Status",
-                    es: "Estado",
-                  }}
-                />
-              </th>
-              <th>
-                <TextComponent
-                  type="h2"
-                  text={{
-                    en: "Actions",
-                    es: "Acciones",
-                  }}
-                />
+                <TextComponent type="p" text={"Acciones"} disableLocales />
               </th>
             </tr>
           </thead>
-          <tbody>
-            {renderStudents()}
-          </tbody>
+          <tbody>{renderStudents()}</tbody>
         </table>
       </div>
-
     </div>
-  )
+  );
 }
