@@ -1,16 +1,17 @@
-import { TextComponent } from "components/Texts";
-import React, { useReducer, useContext, useEffect } from "react";
-import { ChatContext } from "views/Home/HomeScreen";
-import { reducer, actions, initialState } from "./reducer";
-import Icon from "components/icon";
-import { Loader } from "components/Loader";
-import "./styles.sass";
-import { Form } from "components/Forms";
-import { Input } from "components/Inputs";
 import { petition } from "api";
-import { Button } from "components/Buttons";
+import { Form } from "components/Forms";
+import Icon from "components/icon";
+import { Input } from "components/Inputs";
+import { Loader } from "components/Loader";
+import { TextComponent } from "components/Texts";
+import React, { useContext, useEffect, useReducer } from "react";
+import { useNavigate } from "react-router-dom";
+import { ChatContext } from "views/Home/HomeScreen";
+import { actions, initialState, reducer } from "./reducer";
+import "./styles.sass";
 export const SidebarChat = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const navigate = useNavigate();
   const { setSelectedUser, userDataSocket, userInfo, socket, socketActions } =
     useContext(ChatContext);
 
@@ -18,12 +19,16 @@ export const SidebarChat = () => {
     localStorage.removeItem("userInfo");
     window.location.reload();
   };
-  const handleSearch = () => {
+  const handleSearch = ({ useDocument = false }) => {
+    let query = state.query;
+    if (useDocument) {
+      query = document.getElementById("query__search").value;
+    }
     petition({
       url: "/user/search/",
       method: "POST",
       body: {
-        query: state.query,
+        query: query,
       },
       constants: {
         REQUEST: actions.SEARCH_REQUEST,
@@ -76,6 +81,7 @@ export const SidebarChat = () => {
       socket.off(socketActions.userHasDisconnected);
       socket.off(socketActions.userHasConnected);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (state.getActiveConversations.success) {
@@ -84,7 +90,33 @@ export const SidebarChat = () => {
     return () => {
       socket.off(socketActions.requestUsersStatus);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.getActiveConversations.success]);
+
+  useEffect(() => {
+    // add event listener to send message when user press enter
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const query__search = document.getElementById("query__search");
+        // if the user is focused on the search input, then do search
+        if (query__search === document.activeElement) {
+          handleSearch({ useDocument: true });
+        }
+      }
+    });
+    return () => {
+      document.removeEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          const query__search = document.getElementById("query__search");
+          // if the user is focused on the search input, then do search
+          if (query__search === document.activeElement) {
+            handleSearch({ useDocument: true });
+          }
+        }
+      });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div className="sidebar__chat">
       <div className="sidebar__chat__top">
@@ -97,10 +129,9 @@ export const SidebarChat = () => {
           </div>
           <div className="sidebar__my__profile__info">
             <TextComponent
-              text={{
-                en: `${userInfo.first_name} ${userInfo.last_name}`,
-                es: `${userInfo.first_name} ${userInfo.last_name}`,
-              }}
+              text={`${userInfo.first_name} ${userInfo.last_name}`}
+              disableLocales
+              type="p"
             />
             <TextComponent
               text={{
@@ -109,11 +140,17 @@ export const SidebarChat = () => {
               }}
               type="p"
             />
-            <TextComponent
-              text={`Socket id: ${socket.id}` || "Socket id: No hay conexión"}
-              type="p"
-              disableLocales={true}
-            />
+            {userInfo.role === "Administrator" && (
+              <TextComponent
+                text={"Verificación de estudiantes"}
+                type="p"
+                disableLocales
+                onClick={() => {
+                  navigate("/student-verification");
+                }}
+                modifiers={["link"]}
+              />
+            )}
           </div>
         </div>
         <div className="sidebar__chats__container">
@@ -124,6 +161,7 @@ export const SidebarChat = () => {
                   placeholder={"Buscar usuario"}
                   name={"query"}
                   value={state.query}
+                  id="query__search"
                   onChange={(e) =>
                     dispatch({
                       type: actions.UPDATE_QUERY,
@@ -181,17 +219,6 @@ export const SidebarChat = () => {
               ) : null}
             </>
           )}
-          {/* {users.map((user, index) => (
-          <div className="user__item">
-            <TextComponent
-              type="h4"
-              text={{
-                en: user.name,
-                es: user.name,
-              }}
-            />
-          </div>
-        ))} */}
         </div>
         <div className="sidebar__chats">
           {state.getActiveConversations.loading ? (
@@ -221,7 +248,8 @@ export const SidebarChat = () => {
 
                   <div className="sidebar__chat__item__info">
                     <div className="sidebar__chat__item__info__name">
-                      {user.user[0].status === "online" ? (
+                      {user.user.length > 0 &&
+                      user.user[0].status === "online" ? (
                         <div className="online__status"></div>
                       ) : (
                         <div className="offline__status"></div>

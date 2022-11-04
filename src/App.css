@@ -16,3 +16,6 @@
   border-radius: 100%;
   background-color: #f06666;
 }
+body{
+  position: relative;
+}

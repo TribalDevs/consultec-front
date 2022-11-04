@@ -3,9 +3,8 @@ import styled from "styled-components";
 // Modifiers
 import { applyStyleModifiers } from "styled-components-modifiers";
 // utils
-import { typeScale, primaryFont } from "utils/texts";
+import { formatLanguageText, primaryFont, typeScale } from "utils/texts";
 import { BUTTON_MODIFIERS } from "./modifiers";
-import { formatLanguageText } from "utils/texts";
 
 // icons
 // Loader icon
@@ -137,6 +136,7 @@ export const Button = ({
   loading,
   error,
   icon,
+  disableLocales,
   ...props
 }) => {
   // Get button type
@@ -158,6 +158,7 @@ export const Button = ({
   };
   // Set button type
   const ButtonType = getButtonType();
+  if (props.hidden) return null;
   // Render
   return (
     <ButtonType
@@ -170,7 +171,7 @@ export const Button = ({
       {loading ? (
         <>
           <BiLoaderAlt className={styles.loader} />
-          {language == "en" ? "Loading" : "Cargando"}
+          {language === "en" ? "Loading" : "Cargando"}
         </>
       ) : error && error.isError ? (
         <>
@@ -180,7 +181,9 @@ export const Button = ({
       ) : (
         <>
           {icon && icon}
-          {text && formatLanguageText({ language, en: text.en, es: text.es })}
+          {disableLocales
+            ? text
+            : formatLanguageText({ language, en: text.en, es: text.es })}
         </>
       )}
     </ButtonType>

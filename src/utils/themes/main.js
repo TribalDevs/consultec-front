@@ -56,7 +56,7 @@ export const mainTheme = {
     },
     tertiary: {
       background: main[500],
-      color: main[200],
+      color: main[600],
 
       hover: {
         background: main[200],
