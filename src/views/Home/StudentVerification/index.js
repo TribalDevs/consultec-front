@@ -22,7 +22,7 @@ export default function StudentVerification() {
   const verifyStudent = (id) => {
     petition({
       url: `/admin/validate/${id}/`,
-      method: "POST",
+      method: "PUT",
       body: {},
       dispatch,
       constants: {
@@ -32,7 +32,7 @@ export default function StudentVerification() {
       },
       token: true,
     });
-  }
+  };
   const renderStudents = () => {
     // let auxStudents = testStudents;
     // if (state.filterStudents != "all") {
@@ -44,14 +44,32 @@ export default function StudentVerification() {
       <tr key={index}>
         <td>{`${student.first_name} ${student.last_name}`}</td>
         <td>{student.email}</td>
-        <td>{student.status}</td>
+        <td>{student.is_validated ? "Validado" : "Sin validar"}</td>
         <td>
-          {student.status == "pending" ? (
+          {!student.is_validated ? (
             <button>
-              <TextComponent type="h3" text="Vericar" disableLocales />
+              <TextComponent
+                type="p"
+                text={
+                  state.selectedId == student.id
+                    ? state.selectedIdMessage
+                    : student.is_validated
+                    ? "Validado"
+                    : "Validar"
+                }
+                disableLocales
+                modifiers={["link"]}
+                onClick={() => {
+                  dispatch({
+                    type: actions.SET_SELECTED_ID,
+                    payload: student.id,
+                  });
+                  verifyStudent(student.id);
+                }}
+              />
             </button>
           ) : (
-            <TextComponent type="h3" text={"Verificado"} disableLocales />
+            <TextComponent type="p" text={"Verificado"} disableLocales />
           )}
         </td>
       </tr>

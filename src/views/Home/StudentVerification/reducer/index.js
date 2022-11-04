@@ -55,6 +55,18 @@ const reducer = (state = initialState, action) => {
           success: true,
         },
         selectedIdMessage: "Verificado",
+        getStudents: {
+          ...state.getStudents,
+          data: state.getStudents.data.map((student) => {
+            if (student.id === state.selectedId) {
+              return {
+                ...student,
+                is_validated: true,
+              };
+            }
+            return student;
+          }),
+        },
       };
     case actions.VERIFY_STUDENT_FAILURE:
       return {
@@ -69,7 +81,7 @@ const reducer = (state = initialState, action) => {
     case actions.SET_SELECTED_ID:
       return {
         ...state,
-        selectedId: action.payload.id,
+        selectedId: action.payload,
         selectedIdMessage: "Verificado",
       };
     default:
