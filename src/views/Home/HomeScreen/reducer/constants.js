@@ -25,4 +25,11 @@ export const initialState = {
   callAccepted: false,
   rejectedCall: false,
   calling: false,
+
+  getUserData: {
+    loading: false,
+    error: null,
+    success: false,
+    data: null,
+  },
 };

@@ -1,7 +1,10 @@
+import { petition } from "api";
 import { CallComponent } from "components";
 import { Chat } from "components/Chat";
 import { SidebarChat } from "components/SidebarChat";
-import React, { createContext, useEffect, useRouter } from "react";
+import { useQuery } from "hooks";
+import React, { createContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import { actions, initialState, reducer } from "./reducer";
 import "./styles.sass";
@@ -10,6 +13,8 @@ const socket = io.connect(process.env.REACT_APP_SOCKET_URL);
 export const ChatContext = createContext();
 export default function HomeScreen() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
+  const query = useQuery();
+  const navigate = useNavigate();
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     if (userInfo) {
@@ -27,6 +32,24 @@ export default function HomeScreen() {
       socket.off(state.socketActions.join);
     };
   }, []);
+  const conversation = query.get("conversation");
+  useEffect(() => {
+    if (conversation) {
+      if (!state.selectedUser) {
+        petition({
+          url: `/user/data/${conversation}/`,
+          method: "GET",
+          constants: {
+            REQUEST: actions.GET_USER_DATA,
+            SUCCESS: actions.GET_USER_DATA_SUCCESS,
+            FAILURE: actions.GET_USER_DATA_FAIL,
+          },
+          dispatch,
+          token: true,
+        });
+      }
+    }
+  }, [conversation, navigate]);
   useEffect(() => {
     socket.on(state.socketActions.successJoin, (data) => {
       console.log("successJoin", data);
