@@ -241,7 +241,7 @@ export const initialState = {
           label: "Masculino",
         },
         {
-          value: "not_specified",
+          value: "not_especified",
           label: "Prefiero no responder",
         },
       ],

@@ -50,7 +50,7 @@ const reducer = (state = initialState, action) => {
         register: {
           ...state.register,
           loading: false,
-          error: action.payload,
+          error: action.payload.error,
           success: false,
         },
       };
