@@ -135,8 +135,12 @@ export const SidebarChat = () => {
             />
             <TextComponent
               text={{
-                en: `Status: ${userDataSocket?.status}`,
-                es: `Estado: ${userDataSocket?.status}`,
+                en: `Status: ${
+                  socket?.connected ? "Connected" : "Disconnected"
+                }`,
+                es: `Estado: ${
+                  socket?.connected ? "Connected" : "Disconnected"
+                }`,
               }}
               type="p"
             />
@@ -234,7 +238,7 @@ export const SidebarChat = () => {
                     window.history.pushState(
                       {},
                       "",
-                      `?conversation=${user.id}`
+                      `?conversation=${user.user[0].id}`
                     );
                   }}
                   key={index}
