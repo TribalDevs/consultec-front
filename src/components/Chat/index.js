@@ -194,7 +194,7 @@ export const Chat = ({ user }) => {
       document.removeEventListener("keydown", onEnter);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [state.userSelectedStatus?.socketId]);
   // * Every time we receive a message we scroll to bottom
   useEffect(() => {
     handleScrollToBottom();
