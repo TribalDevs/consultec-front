@@ -1,20 +1,21 @@
-import React, { useReducer, useEffect, useContext } from "react";
-import { reducer, actions, initialState } from "./reducer";
-import { Message } from "components/Message";
-import "./styles.sass";
-import { Button } from "components/Buttons";
-import { TextComponent } from "components/Texts";
+import { petition } from "api";
+import { CallComponent } from "components/Call";
 import { Form } from "components/Forms";
 import Icon from "components/icon";
-import { petition } from "api";
-import { useQuery } from "hooks";
 import { Loader } from "components/Loader";
+import { Message } from "components/Message";
+import { TextComponent } from "components/Texts";
+import { useQuery } from "hooks";
+import React, { useContext, useEffect, useReducer } from "react";
 import { ChatContext } from "views/Home/HomeScreen";
+import { actions, initialState, reducer } from "./reducer";
+import "./styles.sass";
 export const Chat = ({ user }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const query = useQuery();
-  const { socket, socketActions } = useContext(ChatContext);
+  const { socket, socketActions, setShowModalCall, setUserToCall } =
+    useContext(ChatContext);
   const getConversation = (id) => {
     const controller = new AbortController();
     dispatch({
@@ -34,12 +35,26 @@ export const Chat = ({ user }) => {
       controller,
     });
   };
+  const handleScrollToBottom = () => {
+    let chat__history = document.getElementById("chat__history");
+    chat__history.scrollTop = chat__history.scrollHeight;
+  };
   const conversation = query.get("conversation");
-  // useEffect(() => {
-  //   if (conversation) {
-  //     getConversation(conversation);
-  //   }
-  // }, [conversation]);
+  useEffect(() => {
+    // if (conversation) {
+    //   petition({
+    //     url: `/user/data/${conversation}/`,
+    //     method: "GET",
+    //     constants: {
+    //       REQUEST: actions.GET_USER_DATA,
+    //       SUCCESS: actions.GET_USER_DATA_SUCCESS,
+    //       FAILURE: actions.GET_USER_DATA_FAIL,
+    //     },
+    //     dispatch,
+    //     token: true,
+    //   });
+    // }
+  }, [conversation]);
   useEffect(() => {
     if (user.id) {
       getConversation(user.id);
@@ -52,21 +67,61 @@ export const Chat = ({ user }) => {
     return () => {
       socket.off(socketActions.checkUserStatus);
     };
-  }, [user]);
+  }, [user, socket, socketActions]);
   useEffect(() => {
     if (state.validateConversation.loading) {
       state.abortController.abort();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+  const handleSendMessage = ({ useDocument = false }) => {
+    let message = state.message;
+    if (useDocument) {
+      message = document.getElementById("chat__input").value;
+    }
+    if (message === "") return;
+
+    petition({
+      url: `/user/conversation/new/${user.id}/`,
+      method: "POST",
+      body: {
+        message,
+      },
+      constants: {
+        REQUEST: actions.START_CONVERSATION,
+        SUCCESS: actions.START_CONVERSATION_SUCCESS,
+        FAILURE: actions.START_CONVERSATION_FAIL,
+      },
+      dispatch,
+      token: true,
+    });
+    socket.emit(socketActions.sendMessage, {
+      receiver: {
+        socketId: state.userSelectedStatus?.socketId,
+      },
+      message: message,
+      sender: {
+        id: userInfo.id,
+      },
+      user: {
+        id: userInfo.id,
+        first_name: userInfo.first_name,
+        last_name: userInfo.last_name,
+        role: userInfo.role,
+      },
+    });
+  };
   useEffect(() => {
+    // * When user send status
     socket.on(socketActions.sendUserStatus, (data) => {
       dispatch({
         type: actions.SET_USER_SELECTED_REAL_TIME_INFO,
         payload: data,
       });
+      setUserToCall(data);
     });
+    // * When we receive message
     socket.on(socketActions.receiveMessage, (data) => {
-      console.log(data);
       dispatch({
         type: actions.ADD_MESSAGE_RECEIVED,
         payload: data,
@@ -78,10 +133,12 @@ export const Chat = ({ user }) => {
           socketId: data.senderSocketId,
         },
       });
-      let chat__history = document.getElementById("chat__history");
-      // scroll to bottom
-      chat__history.scrollTop = chat__history.scrollHeight;
+      setUserToCall({
+        ...state.userSelectedStatus,
+        socketId: data.senderSocketId,
+      });
     });
+    // * When user has been disconnected
     socket.on(socketActions.userHasDisconnected, (data) => {
       if (data === user.id) {
         dispatch({
@@ -91,8 +148,13 @@ export const Chat = ({ user }) => {
             status: "offline",
           },
         });
+        setUserToCall({
+          ...state.userSelectedStatus,
+          status: "offline",
+        });
       }
     });
+    // * When user has been connected
     socket.on(socketActions.userHasConnected, (data) => {
       if (data.id === user.id) {
         dispatch({
@@ -102,72 +164,67 @@ export const Chat = ({ user }) => {
             status: "online",
           },
         });
+        setUserToCall({
+          socketId: data.socketId,
+          status: "online",
+        });
       }
     });
+    // * Return function to off all events
     return () => {
       socket.off(socketActions.sendUserStatus);
       socket.off(socketActions.receiveMessage);
+      socket.off(socketActions.userHasDisconnected);
+      socket.off(socketActions.userHasConnected);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const handleSendMessage = () => {
-    petition({
-      url: `/user/conversation/new/${user.id}/`,
-      method: "POST",
-      body: {
-        message: state.message,
-      },
-      constants: {
-        REQUEST: actions.START_CONVERSATION,
-        SUCCESS: actions.START_CONVERSATION_SUCCESS,
-        FAILURE: actions.START_CONVERSATION_FAIL,
-      },
-      dispatch,
-      token: true,
-    });
-    console.log(state.userSelectedStatus);
 
-    socket.emit(socketActions.sendMessage, {
-      receiver: {
-        socketId: state.userSelectedStatus?.socketId,
-      },
-      message: state.message,
-      sender: {
-        id: userInfo.id,
-      },
-      user: {
-        id: userInfo.id,
-        first_name: userInfo.first_name,
-        last_name: userInfo.last_name,
-        role: userInfo.role,
-      },
-    });
-    let chat__history = document.getElementById("chat__history");
-    chat__history.scrollTop = chat__history.scrollHeight;
-  };
+  useEffect(() => {
+    // * On enter events
+    const onEnter = (e) => {
+      if (e.key === "Enter") {
+        handleSendMessage({ useDocument: true });
+      }
+    };
+    // * Event listener to send message when user press enter
+    document.addEventListener("keydown", onEnter);
+    // * Return function to remove event listener
+    return () => {
+      document.removeEventListener("keydown", onEnter);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // * Every time we receive a message we scroll to bottom
+  useEffect(() => {
+    handleScrollToBottom();
+  }, [state.chatMessages]);
   return (
     <div className="chat__component">
       <div className="chat__header">
-        <TextComponent
-          type="h4"
-          text={{
-            en: user.first_name + " " + user.last_name,
-            es: user.first_name + " " + user.last_name,
-          }}
-        />
-        {state.userSelectedStatus && (
+        <div className="chat__header__user">
           <TextComponent
-            type="p"
-            text={state.userSelectedStatus.status}
-            disableLocales={true}
+            type="h4"
+            text={`${user.first_name} ${user.last_name} - ${user.role}`}
+            disableLocales
           />
-        )}
-        {state.userSelectedStatus?.socketId && (
-          <TextComponent
-            type="p"
-            text={`Socket ID: ${state.userSelectedStatus?.socketId}`}
-            disableLocales={true}
+          {state.userSelectedStatus && (
+            <TextComponent
+              type="p"
+              text={state.userSelectedStatus.status}
+              disableLocales
+            />
+          )}
+        </div>
+        <div
+          className="chat__header__call"
+          // hidden={!state.userSelectedStatus?.socketId}
+        >
+          <Icon
+            nameIcon="AiOutlinePhone"
+            onClick={() => setShowModalCall(true)}
           />
-        )}
+        </div>
       </div>
       {state.validateConversation.loading ? (
         <div className="chat__loading">
@@ -187,7 +244,7 @@ export const Chat = ({ user }) => {
       )}
 
       <div className="chat__input">
-        <Form>
+        <Form onSubmit={(e) => e.preventDefault()}>
           <input
             placeholder="Enviar mensaje"
             value={state.message}
@@ -197,6 +254,7 @@ export const Chat = ({ user }) => {
                 payload: e.target.value,
               })
             }
+            id="chat__input"
           />
           <div className="chat__input__button">
             <Icon
@@ -207,7 +265,9 @@ export const Chat = ({ user }) => {
                     !state.validateConversation.loading &&
                     !state.startConversation.loading
                   ) {
-                    handleSendMessage();
+                    handleSendMessage({
+                      useDocument: false,
+                    });
                   }
                 }
               }}

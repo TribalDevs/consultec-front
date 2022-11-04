@@ -29,7 +29,7 @@ export const homeRoutes = [
     path: "/student-verification",
     component: StudentVerification,
     exact: true,
-    isPrivate: false,
-    accessWithoutLogin: true,
+    isPrivate: true,
+    accessWithoutLogin: false,
   },
 ];

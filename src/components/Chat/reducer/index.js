@@ -36,6 +36,11 @@ const reducer = (state = initialState, action) => {
           success: false,
           data: null,
         },
+        chatMessages:
+          action.payload.error === "No conversation found"
+            ? []
+            : initialState.chatMessages,
+        userSelectedStatus: initialState.userSelectedStatus,
       };
     case actions.START_CONVERSATION:
       const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -120,7 +125,39 @@ const reducer = (state = initialState, action) => {
           success: false,
           data: null,
         },
-      }
+      };
+    case actions.GET_USER_DATA:
+      return {
+        ...state,
+        getUserData: {
+          ...state.getUserData,
+          loading: true,
+          error: null,
+          success: false,
+        },
+      };
+    case actions.GET_USER_DATA_SUCCESS:
+      return {
+        ...state,
+        getUserData: {
+          ...state.getUserData,
+          loading: false,
+          error: null,
+          success: true,
+          data: action.payload,
+        },
+      };
+    case actions.GET_USER_DATA_FAIL:
+      return {
+        ...state,
+        getUserData: {
+          ...state.getUserData,
+          loading: false,
+          error: action.payload,
+          success: false,
+        },
+      };
+
     default:
       return state;
   }
