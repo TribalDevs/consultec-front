@@ -1,17 +1,13 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // * React router dom stuff
+import { RouteContainer } from "components";
 import { Route, Routes } from "react-router-dom";
 import { homeRoutes as routes } from "routes";
-import { RouteContainer } from "components";
 export const HomeRouter = () => {
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  useEffect(() => {
-    if (!userInfo) {
-      navigate("/login");
-    }
-  }, [userInfo, navigate]);
+
   return (
     <div className="home__router">
       <React.Suspense
