@@ -12,7 +12,7 @@ import "./styles.sass";
 export const SidebarChat = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const navigate = useNavigate();
-  const { setSelectedUser, userDataSocket, userInfo, socket, socketActions } =
+  const { setSelectedUser, userInfo, socket, socketActions } =
     useContext(ChatContext);
 
   const handleLogout = () => {
@@ -81,11 +81,6 @@ export const SidebarChat = () => {
       socket.emit(socketActions.requestUsersStatus, state.usersIds);
     }
     socket.on(socketActions.sendUsersStatus, (data) => {
-      console.log(
-        "Line 84: SidebarChat -> data",
-        data,
-        state.getActiveConversations.data
-      );
       dispatch({
         type: actions.SET_USERS_STATUS,
         payload: data,

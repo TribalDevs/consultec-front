@@ -52,7 +52,6 @@ export default function HomeScreen() {
   }, [conversation, navigate]);
   useEffect(() => {
     socket.on(state.socketActions.successJoin, (data) => {
-      console.log("successJoin", data);
       dispatch({
         type: actions.SET_USER_DATA_SOCKET,
         payload: data,
