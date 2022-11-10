@@ -26,9 +26,6 @@ export async function petition({
     paramsPetition = params;
   }
   try {
-    if (controller) {
-      console.log(controller.signal);
-    }
     dispatch({ type: REQUEST });
     const { data } = await axios({
       method,
@@ -44,11 +41,9 @@ export async function petition({
       type: FAILURE,
       payload: error.response?.data ? error.response.data : error.message,
     });
-    if (
-      error.response?.data === "invalid token" ||
-      error.response?.data === "jwt expired"
-    ) {
-      localStorage.removeItem("token");
+    // if error is 401, then logout
+    if (error.response?.status === 401) {
+      localStorage.removeItem("userInfo");
     }
     throw error.response?.data ? error.response.data : error.message;
   }
