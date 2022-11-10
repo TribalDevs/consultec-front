@@ -64,7 +64,6 @@ export const Chat = ({ user }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
   const handleSendMessage = ({ useDocument = false }) => {
-    console.log(state.userSelectedStatus);
     let message = state.message;
     if (useDocument) {
       message = document.getElementById("chat__input").value;
