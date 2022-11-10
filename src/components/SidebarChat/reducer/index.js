@@ -78,9 +78,10 @@ const reducer = (state = initialState, action) => {
       };
     case actions.SET_USERS_STATUS:
       let updatedUsers = state.getActiveConversations.data;
+      console.log("Before: ", updatedUsers);
       updatedUsers.forEach((item, index) => {
         let itemFromPayload = action.payload.filter(
-          (payloadItem) => payloadItem.id === item.user[0].id
+          (payloadItem) => payloadItem.id == item.user[0].id
         );
         if (itemFromPayload.length > 0) {
           updatedUsers[index].user[0].status = itemFromPayload[0].status;
@@ -88,6 +89,7 @@ const reducer = (state = initialState, action) => {
           updatedUsers[index].user[0].status = "offline";
         }
       });
+      console.log("After: ", updatedUsers);
       return {
         ...state,
         getActiveConversations: {

@@ -51,13 +51,7 @@ export const SidebarChat = () => {
       dispatch,
       token: true,
     });
-    socket.on(socketActions.sendUsersStatus, (data) => {
-      console.log(data);
-      dispatch({
-        type: actions.SET_USERS_STATUS,
-        payload: data,
-      });
-    });
+
     socket.on(socketActions.userHasDisconnected, (data) => {
       dispatch({
         type: actions.SET_USER_STATUS,
@@ -77,7 +71,6 @@ export const SidebarChat = () => {
       });
     });
     return () => {
-      socket.off(socketActions.sendUsersStatus);
       socket.off(socketActions.userHasDisconnected);
       socket.off(socketActions.userHasConnected);
     };
@@ -87,11 +80,23 @@ export const SidebarChat = () => {
     if (state.getActiveConversations.success) {
       socket.emit(socketActions.requestUsersStatus, state.usersIds);
     }
+    socket.on(socketActions.sendUsersStatus, (data) => {
+      console.log(
+        "Line 84: SidebarChat -> data",
+        data,
+        state.getActiveConversations.data
+      );
+      dispatch({
+        type: actions.SET_USERS_STATUS,
+        payload: data,
+      });
+    });
     return () => {
       socket.off(socketActions.requestUsersStatus);
+      socket.off(socketActions.sendUsersStatus);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.getActiveConversations.success]);
+  }, [state.getActiveConversations.success, state.usersIds]);
 
   useEffect(() => {
     // add event listener to send message when user press enter
@@ -243,30 +248,37 @@ export const SidebarChat = () => {
                   }}
                   key={index}
                 >
-                  <div className="sidebar__chat__item__image">
-                    <img
-                      src="https://www.w3schools.com/howto/img_avatar.png"
-                      alt="profile"
-                    />
-                  </div>
-
-                  <div className="sidebar__chat__item__info">
-                    <div className="sidebar__chat__item__info__name">
-                      {user.user.length > 0 &&
-                      user.user[0].status === "online" ? (
-                        <div className="online__status"></div>
-                      ) : (
-                        <div className="offline__status"></div>
-                      )}
-                      <TextComponent
-                        type="span"
-                        text={
-                          user.user[0].first_name + " " + user.user[0].last_name
-                        }
-                        disableLocales={true}
-                      />
-                    </div>
-                  </div>
+                  {user.user[0].status && (
+                    <>
+                      <div className="sidebar__chat__item__image">
+                        <img
+                          src="https://www.w3schools.com/howto/img_avatar.png"
+                          alt="profile"
+                        />
+                      </div>
+                      <div className="sidebar__chat__item__info">
+                        <div className="sidebar__chat__item__info__name">
+                          {user.user.length > 0 &&
+                          user.user[0].status === "online" ? (
+                            <div className="online__status"></div>
+                          ) : (
+                            <div className="offline__status"></div>
+                          )}
+                          <TextComponent
+                            type="span"
+                            text={
+                              user.user[0].first_name +
+                              " " +
+                              user.user[0].last_name +
+                              " " +
+                              user.user[0].status
+                            }
+                            disableLocales={true}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
             </>

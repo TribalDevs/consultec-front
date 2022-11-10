@@ -45,6 +45,7 @@ const reducer = (state = initialState, action) => {
         callAccepted: action.payload,
         rejectedCall: false,
         receivingCall: false,
+        calling: false,
       };
     case actions.SET_REJECTED_CALL:
       return {
