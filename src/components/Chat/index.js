@@ -39,7 +39,9 @@ export const Chat = ({ user }) => {
   };
   const handleScrollToBottom = () => {
     let chat__history = document.getElementById("chat__history");
-    chat__history.scrollTop = chat__history.scrollHeight;
+    if (chat__history) {
+      chat__history.scrollTop = chat__history.scrollHeight;
+    }
   };
 
   useEffect(() => {
