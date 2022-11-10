@@ -148,11 +148,12 @@ export const CallComponent = (props) => {
           <div className="call__container__preview__video">
             <video playsInline muted ref={myVideo} autoPlay />
             <TextComponent
-              text={`${userInfo.first_name} ${userInfo.last_name}`}
+              text={`${userInfo.first_name} ${userInfo.last_name} (Tú)`}
               disableLocales
               type="p"
             />
           </div>
+          {/* other user video */}
           {userVideo && (
             <div className="call__container__preview__video">
               <video playsInline ref={userVideo} autoPlay />
@@ -209,20 +210,18 @@ export const CallComponent = (props) => {
                     disableLocales
                   />
                 )}
-                {userToCall && userToCall.status === "online" ? (
+                {!stateContext.callAccepted && (
                   <Button
                     type="primary"
                     onClick={() => callUser()}
-                    text="Llamar"
+                    text={
+                      userToCall && userToCall.status === "online"
+                        ? "Llamar"
+                        : "El usuario no esta disponible"
+                    }
                     disableLocales
                     loading={stateContext.calling}
-                    hidden={stateContext.callAccepted}
-                  />
-                ) : (
-                  <TextComponent
-                    text="El usuario no esta disponible"
-                    type="p"
-                    disableLocales
+                    disabled={userToCall && userToCall.status !== "online"}
                   />
                 )}
               </>
